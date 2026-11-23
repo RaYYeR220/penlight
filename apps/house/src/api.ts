@@ -211,19 +211,29 @@ app.post("/api/sponsor-withdraw", async (c) => {
     l.amounts.forEach((a, i) => a > 0n && kinds.add(i));
   }
   if (kinds.size === 0) return c.json({ error: "nothing won to withdraw yet" }, 403);
-  if ((await base.getBalance(house.publicKey)) < 500_000_000) return c.json({ error: "sponsor is out of devnet SOL for now" }, 503);
-  const lamports = kinds.size * 5_000_000 + 1_000_000;
-  store.sponsored[k] = Date.now();
-  store.save();
-  mine.push(Date.now());
+  // Claim every limit before the first await, so parallel requests can't slip through.
+  const now = Date.now();
+  store.sponsored[k] = now;
+  mine.push(now);
   sponsorByIp.set(ip, mine);
-  sponsorTimes.push(Date.now());
+  sponsorTimes.push(now);
+  const release = () => {
+    delete store.sponsored[k];
+    mine.splice(mine.indexOf(now), 1);
+    sponsorTimes.splice(sponsorTimes.indexOf(now), 1);
+  };
+  if ((await base.getBalance(house.publicKey)) < 500_000_000) {
+    release();
+    return c.json({ error: "sponsor is out of devnet SOL for now" }, 503);
+  }
+  store.save();
+  const lamports = kinds.size * 5_000_000 + 1_000_000;
   try {
     const { SystemProgram } = await import("@solana/web3.js");
     const signature = await sendAndConfirmTransaction(base, new Transaction().add(SystemProgram.transfer({ fromPubkey: house.publicKey, toPubkey: owner, lamports })), [house]);
     return c.json({ signature, lamports, kinds: kinds.size });
   } catch (e) {
-    delete store.sponsored[k];
+    release();
     store.save();
     return c.json({ error: (e as Error).message.slice(0, 160) }, 502);
   }

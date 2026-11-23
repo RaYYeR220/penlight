@@ -52,6 +52,7 @@ export interface LotView {
   id: number;
   origin: number;
   status: number;
+  sealed: boolean;
   packed: boolean;
   commitment: Uint8Array;
   startPrice: bigint;
@@ -83,6 +84,7 @@ export function decodeLot(address: PublicKey, data: Buffer): LotView {
     id: Number(r.id.toString()),
     origin: r.origin,
     status: r.status,
+    sealed: r.sealed,
     packed: r.packed,
     commitment: Uint8Array.from(r.commitment),
     startPrice: big(r.start_price),

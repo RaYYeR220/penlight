@@ -1,0 +1,213 @@
+{
+  "generatedAt": "2026-11-23T14:44:15.108Z",
+  "lots": 1000,
+  "priorLibrary": 20000,
+  "clock": {
+    "startUsd": 60,
+    "floorUsd": 6,
+    "durationSlots": 4500,
+    "factsAtPercent": [
+      15,
+      30,
+      45,
+      60,
+      75
+    ]
+  },
+  "reactionSlots": 60,
+  "oraclePrices": {
+    "SOL": "7675658500",
+    "BONK": "22955",
+    "WIF": "13251143",
+    "JUP": "24883781",
+    "JTO": "25728154",
+    "PYTH": "5490256",
+    "RAY": "144074365",
+    "POPCAT": "2736200"
+  },
+  "averageTrueValueUsd": 27.96,
+  "possibleLotsLeftAfterFacts": [
+    {
+      "facts": 1,
+      "share": 0.3989
+    },
+    {
+      "facts": 2,
+      "share": 0.1614
+    },
+    {
+      "facts": 3,
+      "share": 0.1064
+    },
+    {
+      "facts": 4,
+      "share": 0.0293
+    },
+    {
+      "facts": 5,
+      "share": 0.0066
+    }
+  ],
+  "solo": [
+    {
+      "strategy": "Random click",
+      "description": "presses TAKE at a uniformly random moment of the clock",
+      "lotsTaken": 1000,
+      "takeRate": 1,
+      "avgEdgeUsd": -4.66,
+      "edgePerLotOfferedUsd": -4.66,
+      "positiveEdgeRate": 0.42
+    },
+    {
+      "strategy": "Prior only (naive baseline)",
+      "description": "same 0.90 × median rule as the appraiser, but ignores every fact (uses the median of all possible lots)",
+      "lotsTaken": 1000,
+      "takeRate": 1,
+      "avgEdgeUsd": 2.68,
+      "edgePerLotOfferedUsd": 2.68,
+      "positiveEdgeRate": 0.561
+    },
+    {
+      "strategy": "Eager (reads 1 fact)",
+      "description": "after the first fact, takes at ≤ 1.05 × the fact-conditioned median",
+      "lotsTaken": 1000,
+      "takeRate": 1,
+      "avgEdgeUsd": -1.08,
+      "edgePerLotOfferedUsd": -1.08,
+      "positiveEdgeRate": 0.487
+    },
+    {
+      "strategy": "Appraiser (reads facts)",
+      "description": "after two facts, takes at ≤ 0.90 × the fact-conditioned median",
+      "lotsTaken": 1000,
+      "takeRate": 1,
+      "avgEdgeUsd": 4.95,
+      "edgePerLotOfferedUsd": 4.95,
+      "positiveEdgeRate": 0.765
+    },
+    {
+      "strategy": "Patient (reads 4+ facts)",
+      "description": "after four facts, takes at ≤ p10 + ½(median − p10)",
+      "lotsTaken": 1000,
+      "takeRate": 1,
+      "avgEdgeUsd": 7.07,
+      "edgePerLotOfferedUsd": 7.07,
+      "positiveEdgeRate": 0.827
+    }
+  ],
+  "races": [
+    {
+      "race": "everyone, including a random clicker",
+      "unsold": 0,
+      "results": [
+        {
+          "strategy": "Random click",
+          "wins": 540,
+          "winShare": 0.54,
+          "avgEdgeUsd": -17.35,
+          "totalEdgeUsd": -9366.33
+        },
+        {
+          "strategy": "Prior only (naive baseline)",
+          "wins": 39,
+          "winShare": 0.039,
+          "avgEdgeUsd": -7.73,
+          "totalEdgeUsd": -301.32
+        },
+        {
+          "strategy": "Eager (reads 1 fact)",
+          "wins": 421,
+          "winShare": 0.421,
+          "avgEdgeUsd": -1.16,
+          "totalEdgeUsd": -489.62
+        },
+        {
+          "strategy": "Appraiser (reads facts)",
+          "wins": 0,
+          "winShare": 0,
+          "avgEdgeUsd": 0,
+          "totalEdgeUsd": 0
+        },
+        {
+          "strategy": "Patient (reads 4+ facts)",
+          "wins": 0,
+          "winShare": 0,
+          "avgEdgeUsd": 0,
+          "totalEdgeUsd": 0
+        }
+      ]
+    },
+    {
+      "race": "facts vs no facts, same rule",
+      "unsold": 0,
+      "results": [
+        {
+          "strategy": "Prior only (naive baseline)",
+          "wins": 480,
+          "winShare": 0.48,
+          "avgEdgeUsd": -3.5,
+          "totalEdgeUsd": -1679.44
+        },
+        {
+          "strategy": "Appraiser (reads facts)",
+          "wins": 520,
+          "winShare": 0.52,
+          "avgEdgeUsd": 5.05,
+          "totalEdgeUsd": 2626.58
+        }
+      ]
+    },
+    {
+      "race": "patient reader vs no facts",
+      "unsold": 0,
+      "results": [
+        {
+          "strategy": "Prior only (naive baseline)",
+          "wins": 604,
+          "winShare": 0.604,
+          "avgEdgeUsd": -2.96,
+          "totalEdgeUsd": -1784.97
+        },
+        {
+          "strategy": "Patient (reads 4+ facts)",
+          "wins": 396,
+          "winShare": 0.396,
+          "avgEdgeUsd": 9.81,
+          "totalEdgeUsd": 3884.1
+        }
+      ]
+    },
+    {
+      "race": "the three fact-readers",
+      "unsold": 0,
+      "results": [
+        {
+          "strategy": "Eager (reads 1 fact)",
+          "wins": 1000,
+          "winShare": 1,
+          "avgEdgeUsd": -1.08,
+          "totalEdgeUsd": -1075.82
+        },
+        {
+          "strategy": "Appraiser (reads facts)",
+          "wins": 0,
+          "winShare": 0,
+          "avgEdgeUsd": 0,
+          "totalEdgeUsd": 0
+        },
+        {
+          "strategy": "Patient (reads 4+ facts)",
+          "wins": 0,
+          "winShare": 0,
+          "avgEdgeUsd": 0,
+          "totalEdgeUsd": 0
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Solo: one strategy against the clock alone. Waiting always gets cheaper, so patience pays trivially here; rivals are what make timing a decision.",
+    "Races: every strategy watches the same lot; the earliest press takes it at that block's price.",
+    "Reaction delay after each fact: 60 blocks (~600 ms)."
+  ]
+}

@@ -5,3 +5,4 @@ export * from "./math.js";
 export * from "./tee.js";
 export * from "./client.js";
 export * from "./verify.js";
+export * from "./appraise.js";

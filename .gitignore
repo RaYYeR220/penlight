@@ -1,0 +1,46 @@
+# build artifacts
+.anchor
+target
+**/*.rs.bk
+test-ledger
+.surfpool
+dist
+.next
+out
+
+# dependencies
+node_modules
+.yarn
+.pnp.*
+
+# environment
+.env
+.env.*
+!.env.example
+*-keypair.json
+keys/
+
+# editors / os
+.DS_Store
+.idea
+.vscode
+
+# working notes and design scratch — not part of the product
+*-internal/
+docs/plans/
+ui-prototypes/
+mockups/
+design-ref/
+variants/
+scratch/
+*.bundle
+
+.vercel
+BRIEF.md
+SHIP-STATE.md
+ALTERNATIVES.md
+*-backup*
+spike/
+recon/
+submission-packet.md
+scripts/_probe.ts

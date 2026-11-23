@@ -184,3 +184,35 @@ app.post("/api/relay", async (c) => {
     return c.json({ error: (e as Error).message.slice(0, 200) }, 502);
   }
 });
+
+// ── withdrawal sponsor: a little devnet SOL so a browser player can pay the
+//    base-layer fees of moving their winnings out of the rollup to Solana ──
+const sponsored = new Map<string, number>();
+let sponsorTimes: number[] = [];
+app.post("/api/sponsor-withdraw", async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  let owner: PublicKey;
+  try {
+    owner = new PublicKey(String(body.owner));
+  } catch {
+    return c.json({ error: "owner must be a public key" }, 400);
+  }
+  const k = owner.toBase58();
+  if (!store.faucetGiven[k]) return c.json({ error: "get test USDC from the faucet first" }, 403);
+  if (Date.now() - (sponsored.get(k) ?? 0) < 12 * 3_600_000) return c.json({ error: "already sponsored recently" }, 409);
+  const hourAgo = Date.now() - 3_600_000;
+  sponsorTimes = sponsorTimes.filter((t) => t > hourAgo);
+  if (sponsorTimes.length >= 20) return c.json({ error: "sponsor is busy, try again later" }, 429);
+  const kinds = Math.min(Math.max(Number(body.kinds) || 1, 1), 8);
+  const lamports = kinds * 5_000_000 + 1_000_000;
+  sponsored.set(k, Date.now());
+  sponsorTimes.push(Date.now());
+  try {
+    const { SystemProgram } = await import("@solana/web3.js");
+    const signature = await sendAndConfirmTransaction(base, new Transaction().add(SystemProgram.transfer({ fromPubkey: house.publicKey, toPubkey: owner, lamports })), [house]);
+    return c.json({ signature, lamports });
+  } catch (e) {
+    sponsored.delete(k);
+    return c.json({ error: (e as Error).message.slice(0, 160) }, 502);
+  }
+});

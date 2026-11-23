@@ -142,6 +142,15 @@ const DISC = (name: string) => {
   if (!ix) throw new Error(`instruction ${name} not in IDL`);
   return Buffer.from(ix.discriminator);
 };
+// Where the lot sits in each instruction's account list, read from the IDL.
+const accountIndex = (ix: string, account: string) => {
+  const camel = ix.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
+  const def = pl.program.idl.instructions.find((i) => i.name === ix || i.name === camel) as { accounts: { name: string }[] };
+  const idx = def.accounts.findIndex((a) => a.name === account);
+  if (idx < 0) throw new Error(`${account} not in ${ix}`);
+  return idx;
+};
+const ACC = { createLot: accountIndex("create_lot", "lot"), delegateLot: accountIndex("delegate_lot", "lot") };
 const relayTimes = new Map<string, number[]>();
 let relayGlobal: number[] = [];
 const RELAY_PER_CLIENT_HOUR = 20;
@@ -175,7 +184,7 @@ app.post("/api/relay", async (c) => {
   if (!ci.data.subarray(0, 8).equals(create) || !di.data.subarray(0, 8).equals(delegate)) return c.json({ error: "only [create_lot, delegate_lot] is relayed" }, 400);
   // create_lot: payer = House, seller = a different signer. delegate_lot: payer = House, same lot.
   if (!ci.keys[0].pubkey.equals(house.publicKey) || ci.keys[1].pubkey.equals(house.publicKey)) return c.json({ error: "bad create_lot accounts" }, 400);
-  if (!di.keys[0].pubkey.equals(house.publicKey) || !di.keys[2].pubkey.equals(ci.keys[3].pubkey)) return c.json({ error: "bad delegate_lot accounts" }, 400);
+  if (!di.keys[0].pubkey.equals(house.publicKey) || !di.keys[ACC.delegateLot].pubkey.equals(ci.keys[ACC.createLot].pubkey)) return c.json({ error: "bad delegate_lot accounts" }, 400);
   // Only players who came in through the faucet can have the House pay for a lot.
   if (!store.faucetGiven[ci.keys[1].pubkey.toBase58()]) return c.json({ error: "get test USDC from the faucet first" }, 403);
   relayGlobal.push(Date.now());

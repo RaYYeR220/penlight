@@ -1,0 +1,1136 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penlight</title>
+<meta name="description" content="Sealed lots of real tokens on a falling price clock. Each true fact narrows what's inside. Take it when you've seen enough.">
+<script>
+(function(){var t='light';
+if(t==='color')t='colour';if(t!=='dark'&&t!=='colour')t='light';document.documentElement.setAttribute('data-theme',t);})();
+</script>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+html{background:var(--ground); scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+body{
+  background-color:var(--ground);
+  background-image:
+    radial-gradient(46% 46% at 70% 40%, var(--pool-1) 0%, rgba(0,0,0,0) 70%),
+    radial-gradient(36% 40% at 6% 0%, var(--pool-2) 0%, rgba(0,0,0,0) 70%);
+  background-size:100% 1150px, 100% 1150px; background-repeat:no-repeat;
+  color:var(--ink); font-family:var(--sans); font-size:var(--fs-body); line-height:var(--lh-body); letter-spacing:var(--track-body);
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+::selection{background:var(--accent); color:var(--on-accent)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:6px}
+.grain{position:fixed; inset:0; pointer-events:none; z-index:60; opacity:var(--grain-opacity); mix-blend-mode:var(--grain-blend);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
+  background-size:220px 220px}
+.wrap{max-width:var(--container); margin:0 auto; padding:0 var(--gutter)}
+.mono{font-family:var(--mono); font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+
+/* ---------- buttons ---------- */
+.btn{font:500 15px/1 var(--sans); letter-spacing:-.005em; text-decoration:none; padding:15px 22px; border-radius:var(--r-full); display:inline-flex; align-items:center; gap:10px; border:0; cursor:pointer; transition:background var(--t-fast), color var(--t-fast), box-shadow var(--t-fast)}
+.btn svg{width:14px; height:14px; flex:none}
+.btn-ink{background:var(--ink); color:var(--ground)}
+.btn-ink:hover{background:var(--ink-2)}
+.btn-accent{background:var(--accent); color:var(--on-accent)}
+.btn-accent:hover{background:var(--accent-deep)}
+.btn-ghost{background:transparent; color:var(--ink); box-shadow:inset 0 0 0 1px var(--hair-2)}
+.btn-ghost:hover{box-shadow:inset 0 0 0 1px var(--ink)}
+.btn.sm{font-size:14px; padding:11px 16px}
+.link{font:500 15px/1 var(--sans); color:var(--ink); text-decoration:none; padding-bottom:5px; border-bottom:1px solid var(--hair-3); transition:border-color var(--t-fast)}
+.link:hover{border-color:var(--ink)}
+.more{font-size:13.5px; color:var(--muted); text-decoration:none; display:inline-flex; gap:6px; align-items:baseline; border-bottom:1px solid var(--hair-2); padding-bottom:3px; transition:color var(--t-fast), border-color var(--t-fast)}
+.more:hover{color:var(--ink); border-color:var(--ink)}
+.more b{font-weight:500; color:var(--ink)}
+
+/* ---------- nav ---------- */
+.nav{position:sticky; top:0; z-index:40; background:var(--nav-bg); -webkit-backdrop-filter:blur(14px) saturate(1.1); backdrop-filter:blur(14px) saturate(1.1); border-bottom:1px solid transparent; transition:border-color .3s}
+.nav.scrolled{border-bottom-color:var(--hair)}
+.nav .wrap{height:72px; display:flex; align-items:center; gap:40px}
+.brand{display:flex; align-items:center; gap:10px; font-weight:600; font-size:18px; letter-spacing:-.025em; color:var(--ink); text-decoration:none}
+.brand svg{width:24px; height:14px}
+.links{display:flex; gap:28px; margin-left:auto}
+.links a{color:var(--muted); text-decoration:none; font-size:14.5px; transition:color var(--t-fast)}
+.links a:hover{color:var(--ink)}
+.btn-nav{font:500 14px/1 var(--sans); color:var(--ink); text-decoration:none; padding:10px 16px; border-radius:var(--r-full); box-shadow:inset 0 0 0 1px var(--hair-2); transition:box-shadow var(--t-fast)}
+.btn-nav:hover{box-shadow:inset 0 0 0 1px var(--ink)}
+
+/* ---------- hero ---------- */
+.hero .wrap{display:grid; grid-template-columns:minmax(0,450px) minmax(0,1fr); gap:48px; align-items:center; min-height:calc(100svh - 72px); padding-top:16px; padding-bottom:40px}
+h1{font-weight:500; font-size:var(--fs-display); line-height:var(--lh-tight); letter-spacing:var(--track-display); margin:0}
+.sub{font-size:var(--fs-lead); line-height:1.5; color:var(--muted); margin:26px 0 0; max-width:26em}
+.ctas{display:flex; align-items:center; gap:26px; margin-top:34px; flex-wrap:wrap}
+.proof{margin-top:38px; font-size:13.5px; color:var(--muted); display:flex; gap:10px; align-items:baseline; line-height:1.5}
+.proof i{width:6px; height:6px; border-radius:50%; background:var(--accent); display:inline-block; flex:none; transform:translateY(-1px)}
+
+/* ---------- the object ---------- */
+.stage{position:relative; display:grid; grid-template-columns:minmax(0,1fr) 216px; column-gap:26px;
+  grid-template-areas:"head head" "ring side" "read side" "legend legend" "foot foot"}
+.stage canvas{position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1}
+.st-head{grid-area:head; display:flex; align-items:center; justify-content:space-between; gap:16px; padding-bottom:6px; position:relative; z-index:2}
+.lotline{display:flex; align-items:center; gap:8px}
+.lotline b{font:500 13px/1 var(--mono); letter-spacing:-.01em}
+.tag{font:500 11px/1 var(--sans); letter-spacing:.01em; color:var(--muted); border:1px solid var(--hair-2); border-radius:var(--r-full); padding:4px 8px}
+.status{font-size:13px; color:var(--muted); display:flex; align-items:center; gap:8px; min-width:0}
+.status i{width:6px; height:6px; border-radius:50%; background:var(--accent); flex:none}
+.status span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.ring-box{grid-area:ring; width:min(100%, max(320px, calc(100svh - 300px))); aspect-ratio:1/1; justify-self:start; pointer-events:none; position:relative; z-index:0}
+.side{grid-area:side; list-style:none; margin:0; padding:0; position:relative; z-index:2; pointer-events:none}
+.fx{position:absolute; left:0; right:0; top:0; display:flex; flex-direction:column; gap:4px; transition:top .55s var(--ease)}
+.fx-m{font:400 11.5px/1.3 var(--mono); letter-spacing:-.01em; color:var(--faint)}
+.fx-t{font-size:14px; line-height:1.32; color:var(--faint); transition:color .3s}
+.fx-n{display:none; font:400 12px/1.3 var(--mono); color:var(--muted); margin-top:4px}
+.fx.lit .fx-m{color:var(--muted)}
+.fx.lit .fx-t{color:var(--ink)}
+.fx.lead .fx-m{color:var(--ink)}
+.fx.lead .fx-t{font-size:21px; line-height:1.2; letter-spacing:-.022em; font-weight:500; color:var(--ink)}
+.fx.lead .fx-n{display:block}
+.fx.enter{animation:fx-in .7s var(--ease) both}
+@keyframes fx-in{from{opacity:0; transform:translateX(10px)} to{opacity:1; transform:none}}
+.readout{grid-area:read; display:flex; align-items:flex-end; gap:24px; padding-top:4px; position:relative; z-index:2}
+.ro .v{font-size:38px; letter-spacing:-.045em; line-height:1; display:block}
+.ro .v2{font-size:24px; letter-spacing:-.035em; line-height:1; display:block}
+.ro .l{font-size:12.5px; color:var(--muted); display:block; margin-top:9px; white-space:nowrap}
+.ro .l .mono{font-size:12px}
+.take{margin-left:auto; font:500 15px/1 var(--sans); padding:15px 20px; border-radius:var(--r-full); background:var(--accent); color:var(--on-accent); border:0; cursor:pointer; white-space:nowrap; transition:background var(--t-fast), color var(--t-fast), box-shadow var(--t-fast); min-width:168px}
+.take:hover:not(:disabled){background:var(--accent-deep)}
+.take:disabled{background:transparent; color:var(--muted); box-shadow:inset 0 0 0 1px var(--hair-2); cursor:default}
+.take .mono{font-size:14.5px}
+.take span{pointer-events:none}
+.legend{grid-area:legend; display:flex; flex-wrap:wrap; align-items:center; gap:8px 18px; margin-top:22px; padding-top:14px; border-top:1px solid var(--hair); font-size:12.5px; color:var(--muted); position:relative; z-index:2}
+.legend ul{display:flex; flex-wrap:wrap; gap:7px 14px; list-style:none; margin:0; padding:0}
+.legend li{display:flex; align-items:center; gap:6px; font:500 11.5px/1 var(--mono); color:var(--ink-2)}
+.legend li i{width:8px; height:8px; border-radius:50%; display:inline-block}
+.foot{grid-area:foot; font-size:12px; color:var(--faint); margin:10px 0 0; line-height:1.5; position:relative; z-index:2}
+.foot .mono{font-size:11.5px}
+
+.tip{position:absolute; pointer-events:none; font:500 12.5px/1.3 var(--sans); color:var(--ink); background:var(--card); border:1px solid var(--hair-2); border-radius:var(--r-md);
+  padding:7px 10px; white-space:nowrap; opacity:0; transform:translate(-50%,-135%); transition:opacity .15s; z-index:6}
+.tip .mono{font-size:12px}
+.tip.on{opacity:1}
+
+.card{position:absolute; left:50%; top:50%; width:324px; transform:translate(-50%,-50%) scale(.06); opacity:0; pointer-events:none;
+  background:var(--card); border:1px solid var(--hair-2); border-radius:var(--r-card); padding:18px 20px 16px; z-index:5;
+  transition:transform .5s var(--ease), opacity .3s var(--ease)}
+.card.on{transform:translate(-50%,-50%) scale(1); opacity:1; pointer-events:auto}
+.card-h{display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:12.5px; color:var(--muted); margin-bottom:10px}
+.card-h .ok{color:var(--ink); white-space:nowrap}
+.card ul{list-style:none; margin:0; padding:0}
+.card li, .card .row{display:flex; justify-content:space-between; align-items:center; font-size:14px; padding:7px 0; border-top:1px solid var(--hair)}
+.card li:first-child{border-top:none}
+.card li span:first-child{display:flex; align-items:center; gap:9px}
+.card li em{width:8px; height:8px; border-radius:50%; display:inline-block}
+.card .row{color:var(--muted)}
+.card .row .mono{color:var(--ink)}
+.card .row.edge{padding-top:10px; color:var(--ink); font-weight:500}
+.card .row.edge .mono{font-size:26px; letter-spacing:-.04em; font-weight:500}
+.card-note{font-size:12.5px; line-height:1.45; color:var(--muted); margin:8px 0 0}
+.card-act{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap}
+.card-act .btn{flex:1 1 auto; justify-content:center}
+
+/* ---------- sections ---------- */
+section.sec{padding:var(--section-y) 0 0}
+.sec-head{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:48px; align-items:end; margin-bottom:56px}
+h2{font-weight:500; font-size:var(--fs-h2); line-height:1.02; letter-spacing:var(--track-h2); margin:0}
+.lead{font-size:var(--fs-lead); line-height:1.5; color:var(--muted); margin:0; max-width:32em}
+h3{font-weight:500; font-size:var(--fs-h3); letter-spacing:-.02em; line-height:1.2; margin:0}
+.pill{font:500 11px/1 var(--sans); color:var(--muted); border:1px solid var(--hair-2); border-radius:var(--r-full); padding:4px 8px; vertical-align:middle; letter-spacing:.01em}
+
+/* how */
+.schem{display:block; width:100%; height:auto; color:var(--ink); overflow:visible}
+.schem .t{font:400 13px var(--sans); fill:var(--muted)}
+.schem .rail{stroke:var(--ink); stroke-opacity:.22; fill:none}
+.schem .ticks{stroke:var(--ink); stroke-opacity:.28; fill:none}
+.schem .ticks.dense{stroke-opacity:.16}
+.schem .clockticks{stroke:var(--accent); stroke-opacity:.75; fill:none}
+.schem .encl{fill:var(--accent-soft); stroke:var(--hair-3); stroke-width:1}
+.schem .route{stroke:var(--ink); stroke-width:1.5; fill:none}
+.schem .node{fill:var(--ground); stroke:var(--ink); stroke-width:1.5}
+.schem .node.take{fill:var(--accent); stroke:var(--accent)}
+.schem .pulse{fill:var(--accent)}
+.steps{list-style:none; margin:28px 0 0; padding:0; display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:24px}
+.steps li{padding-top:16px; border-top:1px solid var(--hair-2)}
+.steps .n{font-size:13px; color:var(--muted); display:block; margin-bottom:12px}
+.steps h3{font-size:17px; letter-spacing:-.015em; margin-bottom:8px}
+.steps p{font-size:14.5px; line-height:1.5; color:var(--muted); margin:0}
+.steps p .mono{font-size:13.5px; color:var(--ink)}
+
+/* numbers */
+.lead-fig{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:48px; padding:40px 0 48px; border-top:1px solid var(--hair-2)}
+.lead-fig p{color:var(--muted); font-size:16px; margin:14px 0 22px; max-width:28em}
+.duel{display:grid; grid-template-columns:1fr 1fr; gap:0}
+.duel > div{padding:0 0 0 28px; border-left:1px solid var(--hair-2)}
+.fig{display:block; font-size:var(--fs-figure); font-weight:500; letter-spacing:-.05em; line-height:.95; font-variant-numeric:tabular-nums}
+.fig.pos{color:var(--pos)} .fig.neg{color:var(--neg)}
+.fig-l{display:block; font-size:15px; color:var(--ink); margin-top:16px}
+.fig-s{display:block; font-size:13.5px; color:var(--muted); margin-top:4px}
+.figs{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:0; border-top:1px solid var(--hair-2)}
+.figs > div{padding:36px 28px 8px; border-left:1px solid var(--hair-2); display:flex; flex-direction:column}
+.figs > div:first-child{border-left:none; padding-left:0}
+.figs .fig{font-size:clamp(46px, 4.6vw, 68px)}
+.figs h3{font-size:17px; margin:18px 0 8px}
+.figs p{font-size:14.5px; color:var(--muted); margin:0 0 20px; line-height:1.5}
+.figs .more{margin-top:auto; align-self:flex-start}
+
+/* why */
+.cmp{border-top:1px solid var(--hair-2)}
+.cmp-h, .cmp-r{display:grid; grid-template-columns:minmax(0,3fr) minmax(0,4fr) minmax(0,5fr); gap:32px}
+.cmp-h{padding:18px 0; font-size:13.5px; color:var(--muted)}
+.cmp-h .pen{color:var(--ink); display:flex; align-items:center; gap:8px}
+.cmp-h .pen i{width:6px; height:6px; border-radius:50%; background:var(--accent)}
+.cmp-r{padding:24px 0; border-top:1px solid var(--hair)}
+.cmp-r h3{font-size:18px}
+.cmp-r .plain{color:var(--muted); font-size:15.5px; line-height:1.5; margin:0}
+.cmp-r .ours{color:var(--ink); font-size:15.5px; line-height:1.5; margin:0}
+.cmp-r .lbl{display:none}
+.bench{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0; margin-top:40px; border:1px solid var(--hair-2); border-radius:var(--r-panel); overflow:hidden}
+.bench > div{padding:22px 24px; border-left:1px solid var(--hair)}
+.bench > div:first-child{border-left:none}
+.bench b{display:block; font:500 22px/1.1 var(--mono); letter-spacing:-.03em; font-weight:500}
+.bench b span{color:var(--muted)}
+.bench small{display:block; font-size:13px; color:var(--muted); margin-top:8px; line-height:1.4}
+.bench-cap{font-size:12.5px; color:var(--faint); margin:12px 0 0}
+
+/* verify */
+.verify{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:56px; align-items:start}
+.verify .lead{margin-top:20px}
+.verify ul{margin:24px 0 30px; padding:0; list-style:none; display:grid; gap:10px}
+.verify ul li{font-size:15px; color:var(--muted); padding-left:18px; position:relative}
+.verify ul li::before{content:''; position:absolute; left:0; top:.62em; width:8px; height:1px; background:var(--hair-3)}
+.verify ul li b{font-weight:500; color:var(--ink)}
+.term{background:var(--term-bg); color:var(--term-ink); border-radius:var(--r-box); padding:22px 24px 24px; font:400 13.5px/1.65 var(--mono); letter-spacing:-.01em; position:relative; border:1px solid var(--term-hair)}
+.term .cmd{display:flex; gap:10px; flex-wrap:wrap; align-items:baseline}
+.term .cmd .p{color:var(--term-muted)}
+.term .dim{color:var(--term-muted)}
+.term .gap{height:12px}
+.term .chk{display:grid; grid-template-columns:18px minmax(150px, 190px) minmax(0,1fr); gap:0 10px}
+.term .chk .ok{color:var(--term-ok)}
+.term .chk .d{color:var(--term-muted)}
+.term .all{color:var(--term-ok)}
+.term .ln{opacity:1; transition:opacity .35s var(--ease)}
+.term.wait .ln{opacity:0}
+.copy{position:absolute; right:14px; top:14px; font:500 12px/1 var(--sans); color:var(--term-muted); background:none; border:1px solid var(--term-hair); border-radius:var(--r-full); padding:7px 11px; cursor:pointer}
+.copy:hover{color:var(--term-ink); border-color:var(--term-muted)}
+
+/* builders */
+.cards3{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:20px}
+.bcard{border:1px solid var(--hair-2); border-radius:var(--r-card); padding:26px 26px 22px; display:flex; flex-direction:column; gap:12px; background:transparent; transition:border-color var(--t-fast)}
+.bcard:hover{border-color:var(--hair-3)}
+.bcard .k{display:flex; justify-content:space-between; align-items:baseline; gap:12px}
+.bcard .k span{font:400 12.5px/1 var(--mono); color:var(--muted)}
+.bcard p{margin:0; color:var(--muted); font-size:15px; line-height:1.5}
+.bcard code{margin-top:auto; display:block; font:400 12.5px/1.5 var(--mono); color:var(--ink); background:var(--card-2); border:1px solid var(--hair); border-radius:var(--r-md); padding:10px 12px; overflow-wrap:anywhere}
+
+/* floor */
+.lots{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:20px}
+.lcard{border:1px solid var(--hair-2); border-radius:var(--r-card); padding:20px 22px 22px; display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px 18px; align-items:center; align-content:start; background:var(--card)}
+.lcard .lh{grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; font-size:12.5px; color:var(--muted); margin-bottom:8px}
+.lcard .lh b{font:500 13px/1 var(--mono); color:var(--ink)}
+.lcard canvas{width:96px; height:96px; display:block}
+.lcard .lp b{display:block; font:500 30px/1 var(--mono); letter-spacing:-.045em}
+.lcard .lp small{display:block; font-size:12.5px; color:var(--muted); margin-top:8px}
+.lcard ol{grid-column:1/-1; list-style:none; margin:14px 0 0; padding:12px 0 0; border-top:1px solid var(--hair); display:grid; gap:6px; min-height:84px}
+.lcard ol li{font-size:13.5px; color:var(--ink); display:flex; gap:10px}
+.lcard ol li .mono{font-size:11.5px; color:var(--muted); min-width:28px; padding-top:2px}
+.lcard ol li.pend{color:var(--faint)}
+.floor-cta{display:flex; align-items:center; gap:24px; margin-top:36px; flex-wrap:wrap}
+.floor-cta small{font-size:13px; color:var(--faint)}
+
+/* footer */
+footer{margin-top:var(--section-y); border-top:1px solid var(--hair-2); padding:48px 0 64px}
+.ft{display:grid; grid-template-columns:minmax(0,6fr) minmax(0,3fr) minmax(0,3fr); gap:40px}
+.ft p{margin:14px 0 0; color:var(--muted); font-size:14.5px; max-width:30em}
+.ft h4{font-size:13px; font-weight:500; color:var(--muted); margin:0 0 14px}
+.ft ul{list-style:none; margin:0; padding:0; display:grid; gap:10px}
+.ft ul a{text-decoration:none; color:var(--ink); font-size:14.5px}
+.ft ul a:hover{text-decoration:underline; text-underline-offset:3px}
+.small{margin-top:44px; padding-top:20px; border-top:1px solid var(--hair); display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; font-size:12.5px; color:var(--faint)}
+.small .mono{font-size:12px; overflow-wrap:anywhere}
+
+/* theme switch */
+.theme-switch{position:fixed; right:16px; bottom:16px; z-index:70; display:flex; gap:2px; padding:3px; border-radius:var(--r-full); background:var(--card); box-shadow:inset 0 0 0 1px var(--hair-2); font:500 12px/1 var(--sans)}
+.theme-switch button{font:inherit; color:var(--muted); background:none; border:0; padding:8px 12px; border-radius:var(--r-full); cursor:pointer}
+.theme-switch button[aria-pressed="true"]{background:var(--ink); color:var(--ground)}
+.theme-switch i{display:none}
+.theme-switch [data-t="light"] i{background:#eef0ea} .theme-switch [data-t="dark"] i{background:#0c0d0b} .theme-switch [data-t="colour"] i{background:#1d2b8c}
+
+/* entrance + failsafe */
+.rv{opacity:0; transform:translateY(12px); transition:opacity .8s var(--ease), transform .8s var(--ease); animation:reveal-failsafe .7s 3.5s forwards}
+.rv.in{opacity:1; transform:none}
+@keyframes reveal-failsafe{to{opacity:1; transform:none}}
+
+/* ---------- responsive ---------- */
+@media (max-width:1099px){
+  .hero .wrap{grid-template-columns:1fr; gap:44px; min-height:0; padding-top:40px}
+  .claim{max-width:640px}
+  .stage{max-width:760px; width:100%}
+  .steps{grid-template-columns:repeat(3, minmax(0,1fr)); row-gap:36px}
+  .schem{display:none}
+  .lead-fig{grid-template-columns:1fr; gap:32px}
+  .cards3, .lots{grid-template-columns:1fr 1fr}
+  .verify{grid-template-columns:1fr; gap:36px}
+}
+@media (max-width:900px){
+  .links{display:none}
+  .btn-nav{margin-left:auto}
+  .sec-head{grid-template-columns:1fr; gap:18px; margin-bottom:40px}
+  .figs{grid-template-columns:1fr}
+  .figs > div{border-left:none; padding:28px 0 4px; border-top:1px solid var(--hair)}
+  .figs > div:first-child{border-top:none}
+  .bench{grid-template-columns:1fr 1fr}
+  .bench > div:nth-child(3){border-left:none}
+  .bench > div:nth-child(n+3){border-top:1px solid var(--hair)}
+  .ft{grid-template-columns:1fr 1fr}
+  .ft > div:first-child{grid-column:1/-1}
+}
+@media (max-width:759px){
+  .stage{grid-template-columns:minmax(0,1fr); grid-template-areas:"head" "ring" "read" "side" "legend" "foot"}
+  .ring-box{width:100%}
+  .side{margin-top:22px; pointer-events:auto}
+  .fx{position:relative; top:auto !important; padding:11px 0; border-top:1px solid var(--hair)}
+  .fx.lead .fx-t{font-size:19px}
+  .cmp-h{display:none}
+  .cmp-r{grid-template-columns:1fr; gap:10px}
+  .cmp-r .lbl{display:block; font-size:12px; color:var(--faint); margin-bottom:2px}
+  .cmp-r .ours{padding-left:12px; border-left:2px solid var(--accent)}
+}
+@media (max-width:640px){
+  .steps{grid-template-columns:1fr; gap:0}
+  .steps li{display:grid; grid-template-columns:28px minmax(0,1fr); gap:0 10px; padding:18px 0}
+  .steps .n{grid-row:1 / span 2; margin:2px 0 0}
+  .cards3, .lots{grid-template-columns:1fr}
+  .duel{grid-template-columns:1fr; gap:28px}
+  .duel > div{padding:0; border-left:none}
+  .duel > div + div{padding-top:24px; border-top:1px solid var(--hair)}
+}
+@media (max-width:560px){
+  .nav .wrap{height:60px}
+  h1{font-size:46px; line-height:1}
+  .sub{font-size:17px; margin-top:20px}
+  .ctas{margin-top:26px; gap:20px}
+  .proof{margin-top:24px; font-size:12.5px}
+  .hero .wrap{padding-top:28px; gap:36px}
+  .st-head{flex-direction:column; align-items:flex-start; gap:8px; padding-bottom:4px}
+  .readout{flex-wrap:wrap; gap:16px 22px}
+  .ro .v{font-size:32px}
+  .ro .v2{font-size:22px}
+  .take{margin-left:0; width:100%; min-width:0; padding:16px 20px}
+  .card{width:300px; padding:14px 16px}
+  .card li, .card .row{padding:6px 0; font-size:13.5px}
+  .card .row.edge .mono{font-size:23px}
+  .card-note{display:none}
+  .term{padding:18px 16px; font-size:12.5px}
+  .term .chk{grid-template-columns:16px minmax(0,1fr)}
+  .term .chk .d{grid-column:2; font-size:11.5px; margin-bottom:4px}
+  .copy{display:none}
+  .bench{grid-template-columns:1fr}
+  .bench > div{border-left:none !important; border-top:1px solid var(--hair)}
+  .bench > div:first-child{border-top:none}
+  .ft{grid-template-columns:1fr 1fr; gap:32px}
+  .theme-switch{top:15px; bottom:auto; right:118px; padding:0; gap:4px; background:transparent; box-shadow:none}
+  .theme-switch button{width:30px; height:30px; padding:0; display:grid; place-items:center; position:relative}
+  .theme-switch button span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+  .theme-switch button i{display:block; width:16px; height:16px; border-radius:50%; box-shadow:inset 0 0 0 1px rgba(128,128,128,.55)}
+  .theme-switch button[aria-pressed="true"]{background:transparent; box-shadow:inset 0 0 0 1.5px var(--ink)}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1; transform:none; transition:none; animation:none}
+  .card, .fx, .fx-t{transition:none}
+  .fx.enter{animation:none}
+  .term.wait .ln{opacity:1}
+}
+</style>
+<noscript><style>.rv{opacity:1;transform:none}.term.wait .ln{opacity:1}</style></noscript>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Penlight home">
+      <svg viewBox="0 0 24 14" aria-hidden="true"><circle cx="3" cy="7" r="2.4" fill="currentColor"/><path d="M7 6.1 L23 1.5 V12.5 L7 7.9 Z" fill="currentColor" opacity=".32"/></svg>
+      Penlight
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="#floor">Floor</a><a href="#how">How it works</a><a href="#verify">Verify</a><a href="#build">Studio</a>
+    </nav>
+    <a class="btn-nav" href="/floor">Open app</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap">
+    <div class="claim">
+      <h1 class="rv">Each true fact narrows what's inside.</h1>
+      <p class="sub rv" style="transition-delay:.08s">Each fact is true, and each one rules out most of what the vault could have been. The price keeps falling while you narrow it down. Take it when you've seen enough.</p>
+      <div class="ctas rv" style="transition-delay:.16s">
+        <a class="btn btn-ink" href="#floor">Open the floor
+          <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h9M7.5 3.5 11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+        <a class="link" href="#how">How a lot works</a>
+      </div>
+      <p class="proof rv" style="transition-delay:.24s"><i></i><span>Live on Solana devnet · MagicBlock Private Ephemeral Rollup · VRF · Pyth Lazer prices</span></p>
+    </div>
+
+    <section class="stage rv" id="stage" style="transition-delay:.12s" aria-label="Example lot 0417: a falling price clock, the facts it has disclosed, and the possible contents they still allow">
+      <canvas id="cv" aria-hidden="true"></canvas>
+      <div class="st-head">
+        <div class="lotline"><b>Lot #0417</b><span class="tag">example lot</span></div>
+        <div class="status" id="status" aria-live="polite"><i></i><span id="statusTx">Clock running · the price falls every 10 ms block</span></div>
+      </div>
+      <div class="ring-box" id="ringBox"></div>
+      <ol class="side" id="facts" aria-label="Facts, in the order they come out"></ol>
+      <div class="readout">
+        <div class="ro"><span class="v mono" id="price" aria-label="Price now"></span><span class="l"><span id="priceL">price now</span> · block <span class="mono" id="blockN">0</span> of 4,500</span></div>
+        <div class="ro"><span class="v2 mono" id="count"></span><span class="l" id="countL">could be inside</span></div>
+        <button class="take" id="take" type="button"><span id="takeL">Take at</span> <span class="mono" id="takeP">$60.00</span></button>
+      </div>
+      <div class="legend">
+        <span>Dot colour = the vault's largest token</span>
+        <ul aria-label="Token colours">
+          <li><i style="background:var(--tok-sol)"></i>SOL</li><li><i style="background:var(--tok-bonk)"></i>BONK</li>
+          <li><i style="background:var(--tok-wif)"></i>WIF</li><li><i style="background:var(--tok-jup)"></i>JUP</li>
+          <li><i style="background:var(--tok-jto)"></i>JTO</li><li><i style="background:var(--tok-pyth)"></i>PYTH</li>
+          <li><i style="background:var(--tok-ray)"></i>RAY</li><li><i style="background:var(--tok-popcat)"></i>POPCAT</li>
+        </ul>
+      </div>
+      <p class="foot">Each dot is one vault this lot could be; hover one. The lot and its contents are an example. The share left after each fact follows our eval's average over 1,000 lots: <span class="mono">39.9% → 16.1% → 10.6% → 2.9% → 0.66%</span>.</p>
+      <div class="card" id="card" aria-live="polite">
+        <div class="card-h"><span id="cardWho">Lot #0417 · opened</span><span class="ok">Seal matches ✓</span></div>
+        <ul id="cardRows"></ul>
+        <div class="row"><span>Total value</span><span class="mono" id="cardTotal">$40.68</span></div>
+        <div class="row"><span id="cardPaidL">You paid</span><span class="mono" id="cardPaid"></span></div>
+        <div class="row edge"><span id="cardEdgeL">Your edge</span><span class="mono" id="cardEdge"></span></div>
+        <p class="card-note" id="cardNote"></p>
+        <div class="card-act"><button class="btn btn-ghost sm" id="replay" type="button">Replay</button><a class="btn btn-accent sm" href="#floor">Play on the floor
+          <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h9M7.5 3.5 11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></div>
+      </div>
+      <div class="tip" id="tip"></div>
+    </section>
+  </div>
+</section>
+
+<!-- ============ HOW A LOT WORKS ============ -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>How a lot works</h2>
+      <p class="lead">Solana holds the seal before the sale and the full record after it. Everything in between runs inside MagicBlock's private rollup, where nobody can read the contents.</p>
+    </div>
+    <svg class="schem rv" id="schem" viewBox="0 0 1200 206" role="img" aria-label="Route of a lot: sealed on Solana, moved into the private rollup, sold there on a 10 ms clock, then settled back to Solana">
+      <text class="t" x="0" y="20">Solana devnet · 4.32 slots a second</text>
+      <line class="rail" x1="0" y1="44" x2="1200" y2="44"/>
+      <path class="ticks" id="tkSol"/>
+      <rect class="encl" x="196" y="110" width="828" height="92" rx="18"/>
+      <text class="t" x="216" y="186">Private rollup · Intel TDX · 99.93 blocks a second</text>
+      <line class="rail" x1="214" y1="145" x2="1006" y2="145"/>
+      <path class="ticks dense" id="tkRoll"/>
+      <path class="clockticks" id="tkClock"/>
+      <path class="route" id="route" d="M100 44 C 190 44 210 145 300 145 L 900 145 C 990 145 1010 44 1100 44"/>
+      <circle class="node" cx="100" cy="44" r="6"/>
+      <circle class="node" cx="300" cy="145" r="6"/>
+      <circle class="node" cx="500" cy="145" r="6"/>
+      <circle class="node" cx="700" cy="145" r="6"/>
+      <circle class="node take" cx="900" cy="145" r="6"/>
+      <circle class="node" cx="1100" cy="44" r="6"/>
+      <circle class="pulse" id="pulse" r="3.5" cx="-20" cy="-20"/>
+    </svg>
+    <ol class="steps">
+      <li class="rv"><span class="n">1</span><div><h3>Sealed on Solana</h3><p>The lot is created on Solana with a sha256 seal over every token slot, before any clock exists.</p></div></li>
+      <li class="rv" style="transition-delay:.05s"><span class="n">2</span><div><h3>Into the private rollup</h3><p>Lot and seal move into MagicBlock's Private Ephemeral Rollup, an Intel TDX enclave. The seal has no readers, operator included.</p></div></li>
+      <li class="rv" style="transition-delay:.1s"><span class="n">3</span><div><h3>A seed from inside</h3><p>The lot asks for a VRF seed from inside the rollup. It lands in the private seal in <span class="mono">~221 ms</span> and decides which facts come out.</p></div></li>
+      <li class="rv" style="transition-delay:.15s"><span class="n">4</span><div><h3>A 10 ms clock</h3><p>The price is set by the rollup block. At 15, 30, 45, 60 and 75% of the clock the enclave discloses the next fact, computed with live oracle prices.</p></div></li>
+      <li class="rv" style="transition-delay:.2s"><span class="n">5</span><div><h3>TAKE pays that block's price</h3><p>The first TAKE pays the clock price of the block it lands in. Payment and title move in one rollup transaction.</p></div></li>
+      <li class="rv" style="transition-delay:.25s"><span class="n">6</span><div><h3>Opened, re-derivable on Solana</h3><p>Contents, salt and seed go public, the tokens go to the buyer, and the record returns to Solana for anyone to re-derive.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ THE NUMBERS ============ -->
+<section class="sec" id="numbers">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>The numbers</h2>
+      <p class="lead">Measured on Solana devnet and the private rollup on 23 November 2026. Each figure links to the run behind it.</p>
+    </div>
+    <div class="lead-fig rv">
+      <div>
+        <h3>Reading the facts pays.</h3>
+        <p>The same buying rule over the same 1,000 lots at live oracle prices, head to head. One bidder reads the facts; the other ignores them.</p>
+        <a class="more" href="https://github.com/RaYYeR220/penlight/blob/main/results/eval-skill.json">How we measured: <b>the eval, 1,000 lots</b> →</a>
+      </div>
+      <div class="duel">
+        <div><span class="fig pos">+$5.05</span><span class="fig-l">per lot won, reading the facts</span><span class="fig-s">won 520 of 1,000 lots</span></div>
+        <div><span class="fig neg">−$3.50</span><span class="fig-l">per lot won, ignoring them</span><span class="fig-s">won 480 of 1,000 lots</span></div>
+      </div>
+    </div>
+    <div class="figs">
+      <div class="rv"><span class="fig">23×</span><h3>A finer clock</h3><p>The rollup made 99.93 blocks a second against Solana devnet's 4.32. A 45 s clock falls in 4,497 steps of $0.012 instead of 194 steps of $0.278.</p><a class="more" href="https://github.com/RaYYeR220/penlight/blob/main/results/bench-er-vs-l1.json">How we measured: <b>the benchmark</b> →</a></div>
+      <div class="rv" style="transition-delay:.06s"><span class="fig">~221 ms</span><h3>Randomness from inside the enclave</h3><p>A VRF seed requested and delivered within the private rollup. It lands in the sealed record, so nobody can predict the facts.</p><a class="more" href="https://github.com/RaYYeR220/penlight/blob/main/results/e2e-latest.json">How we measured: <b>the end-to-end run</b> →</a></div>
+      <div class="rv" style="transition-delay:.12s"><span class="fig">Bit for bit</span><h3>Every opened lot re-derives</h3><p>3 of 3 lots in the end-to-end run re-verified from their Solana record. 10 of 10 attacks were refused on-chain.</p><a class="more" href="https://github.com/RaYYeR220/penlight/blob/main/results/e2e-latest.json">How we measured: <b>verify and the attack list</b> →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY A PRIVATE ROLLUP ============ -->
+<section class="sec" id="why">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>Why a private rollup</h2>
+      <p class="lead">On a plain Solana program this sale can't work: the contents are public, the clock is slow, and the randomness is visible the moment it lands.</p>
+    </div>
+    <div class="cmp rv">
+      <div class="cmp-h"><span></span><span>Plain Solana program</span><span class="pen"><i></i>Penlight on MagicBlock</span></div>
+      <div class="cmp-r"><h3>Hidden contents</h3>
+        <div><span class="lbl">Plain Solana program</span><p class="plain">Account data is public. Encrypted contents need the seller to come back and reveal them.</p></div>
+        <div><span class="lbl">Penlight on MagicBlock</span><p class="ours">The seal lives in the enclave. The program discloses facts on schedule, and nobody can read ahead.</p></div></div>
+      <div class="cmp-r"><h3>A clock you can race</h3>
+        <div><span class="lbl">Plain Solana program</span><p class="plain">Slots every few hundred milliseconds; priority fees decide who's first.</p></div>
+        <div><span class="lbl">Penlight on MagicBlock</span><p class="ours">10 ms blocks, no fees. You pay exactly the price of the block your TAKE lands in.</p></div></div>
+      <div class="cmp-r"><h3>Fair randomness</h3>
+        <div><span class="lbl">Plain Solana program</span><p class="plain">A VRF result is public the moment it lands.</p></div>
+        <div><span class="lbl">Penlight on MagicBlock</span><p class="ours">The seed lands in the private seal. Facts stay unpredictable until they come out.</p></div></div>
+      <div class="cmp-r"><h3>Moving tokens</h3>
+        <div><span class="lbl">Plain Solana program</span><p class="plain">A fee on every transfer.</p></div>
+        <div><span class="lbl">Penlight on MagicBlock</span><p class="ours">Payment and delivery happen inside the rollup, then settle back to Solana.</p></div></div>
+    </div>
+    <div class="bench rv">
+      <div><b>99.93 <span>vs</span> 4.32</b><small>blocks a second, rollup vs Solana devnet</small></div>
+      <div><b>4,497 <span>vs</span> 194</b><small>price steps in a 45 s clock</small></div>
+      <div><b>452 <span>vs</span> 893 ms</b><small>signed tx, send to confirmed (median)</small></div>
+      <div><b>0 <span>vs</span> 5,000</b><small>lamports fee per transaction</small></div>
+    </div>
+    <p class="bench-cap">Benchmark, 23 Nov 2026: one client in Europe over the public internet; wall-clock numbers include network round trips. <a class="more" href="https://github.com/RaYYeR220/penlight/blob/main/results/bench-er-vs-l1.json">How we measured</a></p>
+  </div>
+</section>
+
+<!-- ============ VERIFY ============ -->
+<section class="sec" id="verify">
+  <div class="wrap verify">
+    <div class="rv">
+      <h2>Verify it yourself</h2>
+      <p class="lead"><span class="mono">verify</span> reads a lot's final record from Solana and re-derives it from scratch. No wallet, no account.</p>
+      <ul>
+        <li><b>The seal:</b> sha256 over the lot, salt, mints and amounts, against the commitment posted before the clock opened.</li>
+        <li><b>Every fact:</b> from the seed, the contents and the oracle prices it was computed with.</li>
+        <li><b>The price paid:</b> from the clock at the block the TAKE landed in.</li>
+        <li><b>The value:</b> from the amounts and the oracle prices at opening.</li>
+      </ul>
+      <a class="btn btn-ghost" href="/verify">Open Verify in the app</a>
+    </div>
+    <div class="term rv wait" id="term" aria-label="Terminal output of npx penlight verify 5">
+      <button class="copy" id="copy" type="button">Copy</button>
+      <div class="cmd ln"><span class="p">$</span><span>npx penlight verify 5</span></div>
+      <div class="ln"><span>Lot #5</span> <span class="dim">read from Solana devnet (settled record)</span></div>
+      <div class="gap"></div>
+      <div class="chk ln"><span class="ok">✓</span><span>lot is opened</span><span class="d">contents, salt and seed are public</span></div>
+      <div class="chk ln"><span class="ok">✓</span><span>seal matches contents</span><span class="d">sha256(lot‖salt‖mints‖amounts) = sealed</span></div>
+      <div class="chk ln"><span class="ok">✓</span><span>fact 1 re-derived</span><span class="d">same seed, same fact; true for the contents</span></div>
+      <div class="chk ln"><span class="ok">✓</span><span>fact 2 re-derived</span><span class="d">same seed, same fact; true for the contents</span></div>
+      <div class="chk ln"><span class="ok">✓</span><span>fact 3 re-derived</span><span class="d">same seed, same fact; true for the contents</span></div>
+      <div class="chk ln"><span class="ok">✓</span><span>paid the clock price</span><span class="d">price at the TAKE's rollup slot = price paid</span></div>
+      <div class="chk ln"><span class="ok">✓</span><span>value re-computed</span><span class="d">Σ amount × oracle price = recorded value</span></div>
+      <div class="gap"></div>
+      <div class="ln"><span class="all">All 7 checks pass.</span> <span class="dim">Seal, facts, price and value all re-derive from the public record.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BUILDERS ============ -->
+<section class="sec" id="build">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>For builders and agents</h2>
+      <p class="lead">Read lots, appraise them, take them and verify them from code. The House's rival bidders run on the same appraiser you get.</p>
+    </div>
+    <div class="cards3">
+      <article class="bcard rv"><div class="k"><h3>SDK</h3><span>@penlight/sdk</span></div>
+        <p>TypeScript client: instruction builders, rollup connections, the facts engine, the appraiser and <span class="mono">verifyLot</span>.</p>
+        <code>import { verifyLot } from "@penlight/sdk"</code></article>
+      <article class="bcard rv" style="transition-delay:.06s"><div class="k"><h3>CLI</h3><span>penlight</span></div>
+        <p>Browse, appraise, take and verify lots from a terminal, with a test-USDC faucet for devnet.</p>
+        <code>npx penlight appraise</code></article>
+      <article class="bcard rv" style="transition-delay:.12s"><div class="k"><h3>MCP server</h3><span>penlight-mcp</span></div>
+        <p>Agents read lots, appraise them and bid through seven tools, with the same rules as everyone else.</p>
+        <code>list_lots · appraise_lot · take_lot · verify_lot</code></article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FLOOR TEASER ============ -->
+<section class="sec" id="floor">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>The floor <span class="pill">preview</span></h2>
+      <p class="lead">Every lot runs its own clock and discloses its own facts. Take the one you can read best.</p>
+    </div>
+    <div class="lots" id="lots"></div>
+    <div class="floor-cta rv">
+      <a class="btn btn-accent" href="/floor">Open the floor
+        <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h9M7.5 3.5 11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+      <small>Preview lots are illustrative. The live floor is in the app.</small>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="ft">
+      <div>
+        <a class="brand" href="#top" aria-label="Penlight home">
+          <svg viewBox="0 0 24 14" aria-hidden="true"><circle cx="3" cy="7" r="2.4" fill="currentColor"/><path d="M7 6.1 L23 1.5 V12.5 L7 7.9 Z" fill="currentColor" opacity=".32"/></svg>
+          Penlight
+        </a>
+        <p>Sealed lots of real tokens, sold on a falling clock inside a private rollup.</p>
+        <p class="proof" style="margin-top:22px"><i></i><span>Solana devnet · MagicBlock Private Ephemeral Rollup · VRF · Pyth Lazer prices</span></p>
+      </div>
+      <div><h4>Product</h4><ul><li><a href="/floor">Floor</a></li><li><a href="#how">How it works</a></li><li><a href="/verify">Verify</a></li><li><a href="/studio">Studio</a></li></ul></div>
+      <div><h4>Build</h4><ul><li><a href="https://github.com/RaYYeR220/penlight">GitHub</a></li><li><a href="https://github.com/RaYYeR220/penlight#readme">Docs</a></li><li><a href="/verify">Verify a lot</a></li><li><a href="https://github.com/RaYYeR220/penlight/tree/main/packages/mcp">MCP server</a></li></ul></div>
+    </div>
+    <div class="small">
+      <span>Devnet; tokens are devnet twins priced by real feeds.</span>
+      <span>Devnet program <span class="mono">2gqehWewPNJg9t6XtnniyNk8iuC5p6ew1q4XrNHLopkt</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString('en-US');
+  const money = n => '$' + n.toFixed(2);
+  const signed = n => (n >= 0 ? '+$' : '−$') + Math.abs(n).toFixed(2);
+  const TAU = Math.PI * 2;
+  const clamp01 = k => k < 0 ? 0 : k > 1 ? 1 : k;
+  const easeOut = k => 1 - Math.pow(1 - k, 4);
+  const easeIO = k => k < .5 ? 4*k*k*k : 1 - Math.pow(-2*k + 2, 3)/2;
+  const root = document.documentElement;
+
+  // ================= theme =================
+  const THEMES = ['light', 'dark', 'colour'];
+  let C = {};
+  function readColours(){
+    const cs = getComputedStyle(root); const g = k => cs.getPropertyValue(k).trim();
+    C = { ink:g('--ink'), muted:g('--muted'), faint:g('--faint'), accent:g('--accent'), ground:g('--ground'), card:g('--card'),
+          dotA:parseFloat(g('--dot-alpha')) || .9, resA:parseFloat(g('--residue-alpha')) || .15,
+          tok:{SOL:g('--tok-sol'), BONK:g('--tok-bonk'), WIF:g('--tok-wif'), JUP:g('--tok-jup'), JTO:g('--tok-jto'), PYTH:g('--tok-pyth'), RAY:g('--tok-ray'), POPCAT:g('--tok-popcat')} };
+  }
+  function setTheme(t, persist){
+    if(t === 'color') t = 'colour';
+    if(!THEMES.includes(t)) t = 'light';
+    root.setAttribute('data-theme', t);
+    document.querySelectorAll('.theme-switch button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === t)));
+    if(persist){
+      try{ localStorage.setItem('penlight-theme', t); }catch(e){}
+      try{ const u = new URL(location.href); u.searchParams.set('theme', t); history.replaceState(null, '', u); }catch(e){}
+    }
+    readColours();
+    if(typeof onTheme === 'function') onTheme();
+  }
+  document.querySelectorAll('.theme-switch button').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.t, true)));
+  readColours();
+
+  // ================= the example lot (facts pack, EXAMPLE) =================
+  const KINDS = ['SOL','BONK','WIF','JUP','JTO','PYTH','RAY','POPCAT'];
+  const LOT = {
+    id:'0417', start:60, floor:6, step:0.012, blocks:4500, worth:40.68,
+    contents:[['0.31','SOL',22.45], ['420,000','BONK',9.07], ['38','JUP',9.16]],
+    facts:[ {b:675,  pc:15, t:'3 kinds of token inside'},
+            {b:1350, pc:30, t:'Contains BONK'},
+            {b:2025, pc:45, t:'No RAY inside'},
+            {b:2700, pc:60, t:'The largest item is worth $20–$25'},
+            {b:3375, pc:75, t:'Worth more than $35 in total'} ],
+    // possible lots left: eval average share after each fact (39.9 / 16.1 / 10.6 / 2.9 / 0.66 %) of 2,400
+    counts:[2400, 958, 386, 254, 70, 16],
+    coreR:[1, .72, .55, .49, .38, .31]
+  };
+  const priceAt = b => Math.round((LOT.start - LOT.step*b) * 100) / 100;
+  const RIVAL = [2300, 2140, 2860];   // where a House bidder takes it if you don't
+  const A0 = -108 * Math.PI/180, SPAN = 240 * Math.PI/180;   // clock arc: gap faces the claim
+  const angAt = f => A0 + SPAN * f;
+
+  // ---- seeded possibilities: each one fails exactly one fact (or none) ----
+  const rngOf = seed => { let s = seed >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; };
+  const pickN = (rnd, pool, n) => { pool = pool.slice(); const out = []; for(let i=0;i<n;i++) out.push(pool.splice(Math.floor(rnd()*pool.length), 1)[0]); return out; };
+  function firstFail(v){
+    if(v.k !== 3) return 1;
+    const syms = v.items.map(i => i.sym);
+    if(!syms.includes('BONK')) return 2;
+    if(syms.includes('RAY')) return 3;
+    const top = v.items[0].usd; if(top < 20 || top > 25) return 4;
+    if(v.total <= 35) return 5;
+    return 6;
+  }
+  function sampleCut(rnd, cut){
+    for(let guard = 0; guard < 20000; guard++){
+      let set;
+      if(cut === 1){ let k; do { k = 1 + Math.floor(rnd()*8); } while(k === 3); set = pickN(rnd, KINDS, k); }
+      else if(cut === 2) set = pickN(rnd, KINDS.filter(s => s !== 'BONK'), 3);
+      else if(cut === 3) set = ['BONK', 'RAY', pickN(rnd, KINDS.filter(s => s !== 'BONK' && s !== 'RAY'), 1)[0]];
+      else set = ['BONK', ...pickN(rnd, KINDS.filter(s => s !== 'BONK' && s !== 'RAY'), 2)];
+      const k = set.length; const cap = Math.min(29, 2*60/k - 1);
+      let usd;
+      if(cut >= 5){ const top = 20 + rnd()*5; usd = [top, 1 + rnd()*(top - 1), 1 + rnd()*(top - 1)]; for(let i=2;i>0;i--){ const j = Math.floor(rnd()*(i+1)); [usd[i], usd[j]] = [usd[j], usd[i]]; } }
+      else usd = set.map(() => 1 + rnd()*cap);
+      const items = set.map((sym, i) => ({sym, usd:usd[i]})).sort((a, b) => b.usd - a.usd);
+      const total = items.reduce((a, b) => a + b.usd, 0);
+      if(total < LOT.floor || total > LOT.start) continue;
+      const v = {items, total, k};
+      if(firstFail(v) === cut){ v.cut = cut; return v; }
+    }
+    return null;
+  }
+  function buildPop(){
+    const rnd = rngOf(20261123); const all = [];
+    for(let cut = 1; cut <= 6; cut++){
+      const n = LOT.counts[cut-1] - (LOT.counts[cut] || 0) - (cut === 6 ? 1 : 0);
+      for(let i=0;i<n;i++){ const v = sampleCut(rnd, cut); if(v) all.push(v); }
+    }
+    const truth = {items:LOT.contents.map(c => ({sym:c[1], usd:c[2]})).sort((a,b) => b.usd - a.usd), total:LOT.worth, k:3, cut:6, truth:true};
+    all.push(truth);
+    for(let i = all.length - 1; i > 0; i--){ const j = Math.floor(rnd()*(i+1)); [all[i], all[j]] = [all[j], all[i]]; }
+    all.forEach(p => p.top = p.items[0].sym);
+    return all;
+  }
+  function hexDisc(N, R){
+    const d = R / Math.sqrt(N * 0.8660254 / Math.PI); const h = d * 0.8660254; const pts = [];
+    const lim = R*1.25 + 2*d; const rows = Math.ceil(lim/h), cols = Math.ceil(lim/d);
+    for(let r=-rows; r<=rows; r++){ const off = (r & 1) ? d/2 : 0;
+      for(let c=-cols; c<=cols; c++){ const x = c*d + off, y = r*h; pts.push([x, y, x*x + y*y]); } }
+    pts.sort((a, b) => a[2] - b[2]); return {pts:pts.slice(0, N), d};
+  }
+  const POP = buildPop();
+
+  // ---- digit roller: only changed digits move ----
+  class Roller{
+    constructor(el){ this.el = document.createElement('span'); el.appendChild(this.el); this.s = null; this.cells = []; }
+    set(s, now){
+      if(s === this.s) return;
+      const mask = t => t.replace(/\d/g, '0');
+      if(this.s === null || mask(s) !== mask(this.s)){
+        this.el.textContent = ''; this.el.className = 'roll'; this.cells = [];
+        for(const ch of s){
+          if(/\d/.test(ch)){
+            const w = document.createElement('span'); w.className = 'dg';
+            const st = document.createElement('span'); st.className = 'st';
+            st.innerHTML = '<i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i>';
+            st.style.transition = 'none'; st.style.transform = `translateY(${-(+ch)*1.12}em)`;
+            w.appendChild(st); this.el.appendChild(w); this.cells.push({st, v:+ch, last:0});
+          } else { const sp = document.createElement('span'); sp.textContent = ch; this.el.appendChild(sp); this.cells.push(null); }
+        }
+        this.s = s; return;
+      }
+      for(let i=0; i<s.length; i++){
+        const c = this.cells[i]; if(!c) continue; const v = +s[i]; if(v === c.v) continue;
+        c.st.style.transition = (now - c.last < 140 || REDUCE) ? 'none' : '';
+        c.st.style.transform = `translateY(${-v*1.12}em)`; c.v = v; c.last = now;
+      }
+      this.s = s;
+    }
+  }
+  const rollCss = document.createElement('style');
+  rollCss.textContent = '.roll{display:inline-flex;vertical-align:top}.roll>span{display:block;height:1.12em;line-height:1.12em;overflow:hidden}.roll .st{display:block;transition:transform .2s cubic-bezier(.16,1,.3,1)}.roll .st i{display:block;height:1.12em;line-height:1.12em;font-style:normal}';
+  document.head.appendChild(rollCss);
+  const priceR = new Roller($('price')), countR = new Roller($('count'));
+
+  // ================= stage geometry =================
+  const stage = $('stage'), cv = $('cv'), ctx = cv.getContext('2d'), ringBox = $('ringBox'), side = $('facts');
+  let W = 0, H = 0, DPR = 1, CX = 0, CY = 0, RR = 100, S = 80, sideMode = true;
+  const rows = LOT.facts.map((f, i) => {
+    const li = document.createElement('li'); li.className = 'fx';
+    li.innerHTML = `<span class="fx-m mono"></span><span class="fx-t"></span><span class="fx-n"></span>`;
+    side.appendChild(li); return li;
+  });
+  function layout(){
+    const sr = stage.getBoundingClientRect(); W = sr.width; H = sr.height; DPR = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    const rb = ringBox.getBoundingClientRect();
+    CX = rb.left - sr.left + rb.width/2; CY = rb.top - sr.top + rb.height/2;
+    RR = rb.width/2 - (rb.width > 420 ? 26 : 22); S = RR / 1.17;
+    sideMode = window.innerWidth >= 760;
+    const card = $('card'); card.style.left = CX + 'px'; card.style.top = CY + 'px';
+    layoutSide();
+  }
+  function layoutSide(){
+    if(!sideMode){ rows.forEach(li => li.style.top = ''); return; }
+    const sideTop = side.offsetTop; let prevBottom = -1e9;
+    rows.forEach((li, i) => {
+      const th = angAt(LOT.facts[i].pc / 100);
+      const ny = CY + Math.sin(th) * RR - sideTop;
+      const top = Math.max(ny - 9, prevBottom + 14, -10);
+      li.style.top = top + 'px'; prevBottom = top + li.offsetHeight;
+    });
+  }
+
+  // ================= state =================
+  let dots = [], phase = 'clock', who = null, fired = 0, block = 0, tClock0 = 0, tPhase = 0, tTake = 0, tOpen = 0, tVrf = -1e9, leadT = -1e9;
+  let coreR = 1, coreFrom = 1, coreT = 0, countFrom = 2400, countTo = 2400, countT = 0, takeBlock = 0, rivalIdx = 0, rivalB = RIVAL[0];
+  let playing = !REDUCE, cardHover = false, never = false;
+
+  function tween(o, to, dur, now, delay = 0, ease = easeOut){
+    o.f = {x:o.x, y:o.y, r:o.r, ring:o.ring, a:o.a}; o.t = Object.assign({}, o.f, to); o.ts = now + delay; o.dur = dur; o.ease = ease;
+  }
+  function stepDot(o, now){
+    if(!o.t) return; const k = (now - o.ts) / o.dur; if(k <= 0) return;
+    if(k >= 1){ o.x = o.t.x; o.y = o.t.y; o.r = o.t.r; o.ring = o.t.ring; o.a = o.t.a; o.t = null; return; }
+    const e = o.ease(k); for(const p of ['x','y','r','ring','a']) o[p] = o.f[p] + (o.t[p] - o.f[p]) * e;
+  }
+  function settleAll(){ for(const o of dots) if(o.t){ Object.assign(o, o.t); o.t = null; } }
+
+  function setStatus(t){ $('statusTx').textContent = t; }
+  function rowState(i){
+    if(i < fired) return (i === fired - 1 && phase !== 'open') ? 'lead' : 'lit';
+    return never ? 'never' : 'pending';
+  }
+  function renderRows(enterIdx = -1){
+    rows.forEach((li, i) => {
+      const f = LOT.facts[i], st = rowState(i);
+      li.className = 'fx ' + st + (i === enterIdx ? ' enter' : '');
+      li.querySelector('.fx-m').textContent = st === 'lead' ? `Fact ${i+1} of 5 · ${f.pc}% · block ${fmt(f.b)}` : `${i+1} · ${f.pc}% · block ${fmt(f.b)}`;
+      li.querySelector('.fx-t').textContent = (st === 'lit' || st === 'lead') ? f.t : st === 'never' ? 'not reached, taken first' : 'not out yet';
+      li.querySelector('.fx-n').textContent = `${fmt(LOT.counts[i])} → ${fmt(LOT.counts[i+1])} could be inside`;
+    });
+    layoutSide();
+  }
+
+  function newDots(now, entrance){
+    const {pts, d} = hexDisc(POP.length, 1); const rnd = rngOf(77);
+    dots = POP.map((p, j) => {
+      const [x, y] = pts[j]; const jx = (rnd() - .5)*d*.25, jy = (rnd() - .5)*d*.25; const rr = Math.hypot(x, y);
+      const o = {p, x:x + jx, y:y + jy, r:d*.3, ring:0, a:rr > .9 ? .75 : 1, alive:true, ph:rnd()*6.28, out:0, fadeAt:0};
+      if(entrance){ o.x *= .9; o.y *= .9; o.a = 0; tween(o, {x:x + jx, y:y + jy, a:rr > .9 ? .75 : 1}, 700, now, rr*260); }
+      return o;
+    });
+  }
+
+  function fireFact(i, now, instant){
+    fired = i + 1; leadT = now;
+    const R1 = LOT.coreR[i+1]; const rnd = rngOf(31 + i); const keep = []; const delay = instant ? 0 : 380;
+    for(const o of dots){
+      if(!o.alive) continue;
+      if(o.p.cut === i + 1){
+        o.alive = false; o.out = now + delay;
+        let ang = Math.atan2(o.y, o.x); const r0 = Math.hypot(o.x, o.y); if(r0 < .02) ang = rnd()*TAU;
+        const r1 = Math.min(1.1 - rnd()*.05, Math.max(r0 + .06 + rnd()*.14, R1 + .08 + rnd()*.18));
+        tween(o, {x:Math.cos(ang)*r1, y:Math.sin(ang)*r1, ring:1, a:1}, 760, now, delay + rnd()*140);
+      } else keep.push(o);
+    }
+    const {pts, d} = hexDisc(keep.length, R1); const used = new Uint8Array(pts.length);
+    const sc = R1 / coreR; coreFrom = coreR; coreR = R1; coreT = now + delay + 160;
+    keep.sort((a, b) => (a.x*a.x + a.y*a.y) - (b.x*b.x + b.y*b.y));
+    for(const o of keep){
+      const tx = o.x*sc, ty = o.y*sc; let best = -1, bd = 1e9;
+      for(let j=0; j<pts.length; j++){ if(used[j]) continue; const dx = pts[j][0] - tx, dy = pts[j][1] - ty; const dd = dx*dx + dy*dy; if(dd < bd){ bd = dd; best = j; } }
+      used[best] = 1; tween(o, {x:pts[best][0], y:pts[best][1], r:Math.min(d*.3, .042), a:1}, 900, now, delay + 160, easeIO);
+    }
+    countFrom = LOT.counts[i]; countTo = LOT.counts[i+1]; countT = now + delay;
+    if(instant){ settleAll(); countT = 0; for(const o of dots) if(!o.alive) o.out = now - 1e5; }
+    renderRows(instant ? -1 : i);
+  }
+
+  const takeBtn = $('take');
+  function startMid(now, b0, nFacts){
+    phase = 'clock'; who = null; never = false; fired = 0; coreR = coreFrom = 1; coreT = 0;
+    newDots(now, false);
+    for(let i=0; i<nFacts; i++) fireFact(i, now - 1e5, true);
+    leadT = -1e9; tClock0 = now - b0*10; block = b0;
+    countFrom = countTo = LOT.counts[nFacts]; countT = 0;
+    setStatus('Clock running · the price falls every 10 ms block');
+    takeBtn.disabled = false; renderRows();
+  }
+  function startFresh(now){
+    phase = 'seal'; tPhase = now; who = null; never = false; fired = 0; block = 0; coreR = coreFrom = 1; coreT = 0;
+    countFrom = countTo = LOT.counts[0]; countT = 0;
+    newDots(now, true);
+    $('card').classList.remove('on'); $('tip').classList.remove('on');
+    setStatus('Sealed · contents hashed, the seal posted on Solana');
+    takeBtn.disabled = true; renderRows();
+  }
+  function doTake(by, now){
+    phase = 'take'; who = by; tTake = now; takeBlock = block; never = true;
+    setStatus(by === 'you' ? `Taken at block ${fmt(takeBlock)} · payment and title in one rollup transaction`
+                           : `A House bidder took it at block ${fmt(takeBlock)}`);
+    const rnd = rngOf(99);
+    for(const o of dots){
+      if(o.p.truth){ tween(o, {x:0, y:0, r:.06, a:1}, 760, now, 120, easeIO); continue; }
+      if(o.alive){ o.alive = false; o.out = now; const ang = Math.atan2(o.y, o.x) || rnd()*TAU; const r1 = coreR + .1 + rnd()*.25;
+        tween(o, {x:Math.cos(ang)*r1, y:Math.sin(ang)*r1, ring:1, a:1}, 700, now, rnd()*100); }
+      o.fadeAt = now + 260;
+    }
+    countFrom = LOT.counts[fired]; countTo = 1; countT = now;
+    takeBtn.disabled = true; renderRows();
+  }
+  function fillCard(){
+    if(who === null) return;
+    const paid = priceAt(takeBlock), edge = Math.round((LOT.worth - paid)*100)/100;
+    $('cardWho').textContent = who === 'you' ? `Lot #${LOT.id} · yours, opened` : `Taken by a House bidder`;
+    $('cardRows').innerHTML = LOT.contents.map(c => `<li><span><em style="background:${C.tok[c[1]]}"></em><span class="mono">${c[0]} ${c[1]}</span></span><span class="mono">${money(c[2])}</span></li>`).join('');
+    $('cardPaidL').textContent = `${who === 'you' ? 'You paid' : 'They paid'} · block ${fmt(takeBlock)}`;
+    $('cardPaid').textContent = money(paid);
+    $('cardEdgeL').textContent = who === 'you' ? 'Your edge' : 'Their edge';
+    const e = $('cardEdge'); e.textContent = signed(edge); e.style.color = edge >= 0 ? 'var(--pos)' : 'var(--neg)';
+    $('cardNote').textContent = who === 'you'
+      ? `You took it with ${fired} of 5 facts out. Reading the facts averaged +$5.05 a lot won in our eval.`
+      : `Rival bidders are House bots, labelled. Press Take before they do.`;
+  }
+  function doOpen(now){
+    phase = 'open'; tOpen = now; fillCard(); $('card').classList.add('on');
+    $('countL').textContent = 'the one it was';
+    setStatus('Opened · contents re-hashed, the seal matches ✓');
+    for(const o of dots) if(o.p.truth) tween(o, {a:0}, 260, now, 60);
+    renderRows();
+  }
+  function restart(now){
+    rivalIdx = (rivalIdx + 1) % RIVAL.length; rivalB = RIVAL[rivalIdx];
+    $('countL').textContent = 'could be inside';
+    startFresh(now);
+  }
+
+  takeBtn.addEventListener('click', () => {
+    if(phase !== 'clock') return;
+    const now = performance.now();
+    doTake('you', now);
+    // keep the opening in view: on narrow screens the ring sits above the button
+    const rb = ringBox.getBoundingClientRect(), navH = $('nav').offsetHeight;
+    if(rb.top < navH + 8){ try{ scrollBy({top:rb.top - navH - 16, behavior:REDUCE ? 'auto' : 'smooth'}); }catch(e){ scrollBy(0, rb.top - navH - 16); } }
+    if(!playing){ settleAll(); doOpen(now); settleAll(); $('card').style.transition = 'none'; draw(now); }
+  });
+  $('replay').addEventListener('click', () => {
+    $('card').style.transition = ''; $('countL').textContent = 'could be inside';
+    rivalIdx = 0; rivalB = RIVAL[0];
+    startFresh(performance.now());
+    if(!playing){ playing = true; requestAnimationFrame(frame); }
+  });
+  $('card').addEventListener('pointerenter', () => cardHover = true);
+  $('card').addEventListener('pointerleave', () => cardHover = false);
+
+  // ================= loop =================
+  function frame(now){
+    if(!playing) return;
+    if(phase === 'seal' && now - tPhase >= 900){ phase = 'vrf'; tPhase = now; tVrf = now; setStatus('In the private rollup · VRF seed drawn inside the enclave, ~221 ms'); }
+    if(phase === 'vrf' && now - tPhase >= 900){ phase = 'clock'; tClock0 = now; takeBtn.disabled = false; setStatus('Clock running · the price falls every 10 ms block'); }
+    if(phase === 'clock'){
+      let b = Math.floor((now - tClock0) / 10);
+      while(fired < 5 && b >= LOT.facts[fired].b && LOT.facts[fired].b < rivalB) fireFact(fired, now);
+      if(b >= rivalB){ block = rivalB; doTake('rival', now); } else block = b;
+    }
+    if(phase === 'take' && now - tTake >= 950) doOpen(now);
+    if(phase === 'open' && who === 'rival' && now - tOpen >= 9000 && !cardHover) restart(now);
+    draw(now);
+    requestAnimationFrame(frame);
+  }
+
+  function updateReadouts(now){
+    const b = phase === 'seal' || phase === 'vrf' ? 0 : (phase === 'clock' ? block : takeBlock);
+    const p = priceAt(b);
+    priceR.set(money(p), now);
+    $('blockN').textContent = fmt(b);
+    const pl = (phase === 'take' || phase === 'open') ? (who === 'you' ? 'you paid' : 'they paid') : 'price now';
+    if(priceL.textContent !== pl) priceL.textContent = pl;
+    const k = countT ? clamp01((now - countT) / 750) : 1;
+    countR.set(fmt(Math.round(countFrom + (countTo - countFrom) * easeOut(k))), now);
+    const lbl = (phase === 'take' || phase === 'open') ? 'Taken at' : 'Take at';
+    if(takeL.textContent !== lbl) takeL.textContent = lbl;
+    const ps = money(p); if(takeP.textContent !== ps) takeP.textContent = ps;
+  }
+  const takeL = $('takeL'), takeP = $('takeP'), priceL = $('priceL');
+
+  let mouse = null;
+  stage.addEventListener('pointermove', e => { const r = stage.getBoundingClientRect(); mouse = {x:e.clientX - r.left, y:e.clientY - r.top}; if(!playing) draw(performance.now()); });
+  stage.addEventListener('pointerleave', () => { mouse = null; $('tip').classList.remove('on'); if(!playing) draw(performance.now()); });
+
+  function draw(now){
+    updateReadouts(now);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.clearRect(0, 0, W, H);
+    const pk = (now - tVrf) / 560; const dim = (pk >= 0 && pk < 1) ? 1 - .25*Math.sin(Math.PI*pk) : 1;
+    let hover = null, hd = 1e9;
+    // dots
+    for(const o of dots){
+      stepDot(o, now);
+      let a = o.a * dim; if(o.fadeAt && now > o.fadeAt) a *= Math.max(.4, 1 - (now - o.fadeAt)/900);
+      if(a < .01) continue;
+      const wob = o.alive ? .0022 : 0;
+      const px = CX + (o.x + Math.sin(now/1500 + o.ph)*wob) * S, py = CY + (o.y + Math.cos(now/1700 + o.ph)*wob) * S, pr = Math.max(1.1, o.r * S);
+      if(o.ring < 1){ ctx.globalAlpha = a * (1 - o.ring) * C.dotA; ctx.fillStyle = C.tok[o.p.top]; ctx.beginPath(); ctx.arc(px, py, pr, 0, TAU); ctx.fill(); }
+      if(o.ring > 0){
+        const age = o.out ? clamp01((now - o.out) / 2600) : 1;
+        ctx.globalAlpha = a * o.ring * (C.resA * (2 - age)); ctx.strokeStyle = C.ink; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(px, py, Math.max(1.2, pr * .72), 0, TAU); ctx.stroke();
+      }
+      if(mouse && o.alive && o.a > .5 && phase !== 'open'){ const dx = px - mouse.x, dy = py - mouse.y, dd = dx*dx + dy*dy; if(dd < hd && dd < (pr + 7)*(pr + 7)){ hd = dd; hover = {o, px, py, pr}; } }
+    }
+    drawRing(now);
+    drawLeaders(now);
+    if(pk >= 0 && pk < 1){
+      ctx.globalAlpha = (1 - pk) * .8; ctx.strokeStyle = C.accent; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(CX, CY, S * (.08 + 1.05*easeOut(pk)), 0, TAU); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    const tip = $('tip');
+    if(hover){
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(hover.px, hover.py, hover.pr + 3.5, 0, TAU); ctx.stroke();
+      const p = hover.o.p; const syms = p.items.map(i => i.sym);
+      const list = syms.length > 3 ? syms.slice(0, 2).join(' + ') + ` + ${syms.length - 2} more` : syms.join(' + ');
+      tip.innerHTML = `${p.k} kind${p.k > 1 ? 's' : ''} · ${list} · <span class="mono">$${p.total.toFixed(2)}</span>`;
+      tip.style.left = Math.min(W - 110, Math.max(110, hover.px)) + 'px'; tip.style.top = (hover.py - hover.pr) + 'px'; tip.classList.add('on');
+    } else tip.classList.remove('on');
+  }
+
+  function drawRing(now){
+    const b = phase === 'seal' || phase === 'vrf' ? 0 : (phase === 'clock' ? block : takeBlock);
+    const f = b / LOT.blocks; const thHead = angAt(f);
+    ctx.lineCap = 'round';
+    // track
+    ctx.globalAlpha = .18; ctx.strokeStyle = C.ink; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(CX, CY, RR, A0, A0 + SPAN); ctx.stroke();
+    // what's left of the clock = the price still to fall
+    ctx.globalAlpha = phase === 'take' || phase === 'open' ? .45 : 1; ctx.strokeStyle = C.accent; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(CX, CY, RR, thHead, A0 + SPAN); ctx.stroke();
+    // notches: where facts come out
+    LOT.facts.forEach((fa, i) => {
+      const th = angAt(fa.pc / 100), c = Math.cos(th), s = Math.sin(th); const lit = i < fired;
+      ctx.globalAlpha = lit ? .9 : .4; ctx.strokeStyle = C.ink; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(CX + c*(RR - 6), CY + s*(RR - 6)); ctx.lineTo(CX + c*(RR + 6), CY + s*(RR + 6)); ctx.stroke();
+      if(lit){ ctx.globalAlpha = 1; ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(CX + c*RR, CY + s*RR, 3, 0, TAU); ctx.fill(); }
+    });
+    // ends: start and floor price
+    ctx.globalAlpha = 1; ctx.fillStyle = C.faint; ctx.font = '400 11.5px "Geist Mono", ui-monospace, monospace'; ctx.textAlign = 'center';
+    const e0 = [Math.cos(A0), Math.sin(A0)], e1 = [Math.cos(A0 + SPAN), Math.sin(A0 + SPAN)];
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText('start $60.00', CX + e0[0]*RR - 12, CY + e0[1]*RR);
+    ctx.textBaseline = 'top'; ctx.fillText('floor $6.00', CX + e1[0]*RR + 2, CY + e1[1]*RR + 12);
+    for(const e of [e0, e1]){ ctx.globalAlpha = .45; ctx.strokeStyle = C.ink; ctx.beginPath(); ctx.moveTo(CX + e[0]*(RR - 4), CY + e[1]*(RR - 4)); ctx.lineTo(CX + e[0]*(RR + 4), CY + e[1]*(RR + 4)); ctx.stroke(); }
+    // head: now
+    const hx = CX + Math.cos(thHead)*RR, hy = CY + Math.sin(thHead)*RR;
+    ctx.globalAlpha = .22; ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(hx, hy, 9, 0, TAU); ctx.fill();
+    ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(hx, hy, 4.2, 0, TAU); ctx.fill();
+    ctx.lineCap = 'butt'; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'start';
+  }
+
+  function drawLeaders(now){
+    if(!sideMode) return;
+    const sr = stage.getBoundingClientRect();
+    rows.forEach((li, i) => {
+      const st = rowState(i); const r = li.getBoundingClientRect();
+      const th = angAt(LOT.facts[i].pc / 100);
+      const x0 = CX + Math.cos(th)*(RR + 9), y0 = CY + Math.sin(th)*(RR + 9);
+      const x1 = r.left - sr.left - 10, y1 = r.top - sr.top + 8;
+      let k = 1; if(st === 'lead') k = easeOut(clamp01((now - leadT) / 420));
+      ctx.globalAlpha = st === 'lead' ? .7 : st === 'lit' ? .3 : .16; ctx.strokeStyle = C.ink; ctx.lineWidth = 1;
+      ctx.setLineDash(st === 'pending' || st === 'never' ? [2, 3] : []);
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0 + (x1 - x0)*k, y0 + (y1 - y0)*k); ctx.stroke();
+      if(st === 'lead' && k >= 1){ ctx.globalAlpha = 1; ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(x1, y1, 2, 0, TAU); ctx.fill(); }
+    });
+    ctx.setLineDash([]);
+  }
+
+  // ================= floor preview lots (illustrative) =================
+  const PREVIEW = [
+    {id:'0418', start:40, step:.008, b0:1520, worth:null, facts:['4 kinds of token inside', 'Contains RAY', 'No SOL inside', 'Worth less than $50 in total', 'The largest item is 40% of the value']},
+    {id:'0422', start:80, step:.016, b0:780,  facts:['Contains SOL', '2 kinds of token inside', 'The largest item is at least 60% of the value', 'Worth less than $64 in total', 'No JUP inside']},
+    {id:'0425', start:25, step:.005, b0:2840, facts:['1 memecoin inside', 'Contains POPCAT', 'No WIF inside', 'Worth more than $12 in total', 'The largest item is worth $8–$12']}
+  ];
+  const lotsEl = $('lots');
+  lotsEl.innerHTML = PREVIEW.map((l, i) => `
+    <article class="lcard rv" style="transition-delay:${i*.06}s">
+      <div class="lh"><b>Lot #${l.id}</b><span class="pill">preview</span></div>
+      <canvas width="192" height="192" aria-hidden="true"></canvas>
+      <div class="lp"><b class="pp">$0.00</b><small class="pb">block 0 of 4,500</small></div>
+      <ol></ol>
+    </article>`).join('');
+  const lcards = [...lotsEl.querySelectorAll('.lcard')].map((el, i) => ({el, l:PREVIEW[i], cx:el.querySelector('canvas').getContext('2d'), pp:el.querySelector('.pp'), pb:el.querySelector('.pb'), ol:el.querySelector('ol'), n:-1}));
+  const T0 = performance.now();
+  function drawPreview(now){
+    for(const c of lcards){
+      const b = Math.floor((c.l.b0 + (REDUCE ? 0 : (now - T0)/10)) % 4200);
+      const n = [675, 1350, 2025, 2700, 3375].filter(x => b >= x).length;
+      c.pp.textContent = money(Math.round((c.l.start - c.l.step*b)*100)/100);
+      c.pb.textContent = `block ${fmt(b)} of 4,500`;
+      if(n !== c.n){
+        c.n = n;
+        const shown = c.l.facts.map((t, i) => i < n ? `<li><span class="mono">${(i+1)*15}%</span>${t}</li>` : '').filter(Boolean).slice(-2);
+        const next = n < 5 ? `<li class="pend"><span class="mono">${(n+1)*15}%</span>next fact at block ${fmt((n+1)*675)}</li>` : '';
+        c.ol.innerHTML = (n > 2 ? `<li class="pend"><span class="mono"></span>${n - 2} earlier fact${n - 2 > 1 ? 's' : ''}</li>` : '') + shown.join('') + next;
+      }
+      const x = c.cx, D = 2, R = 40, cx = 48, cy = 48, f = b / 4500;
+      x.setTransform(D, 0, 0, D, 0, 0); x.clearRect(0, 0, 96, 96); x.lineCap = 'round';
+      x.globalAlpha = .18; x.strokeStyle = C.ink; x.lineWidth = 1; x.beginPath(); x.arc(cx, cy, R, A0, A0 + SPAN); x.stroke();
+      x.globalAlpha = 1; x.strokeStyle = C.accent; x.lineWidth = 2; x.beginPath(); x.arc(cx, cy, R, angAt(f), A0 + SPAN); x.stroke();
+      for(let i=0; i<5; i++){ const th = angAt((i+1)*.15); x.globalAlpha = i < n ? 1 : .35; x.fillStyle = C.ink; x.beginPath(); x.arc(cx + Math.cos(th)*R, cy + Math.sin(th)*R, i < n ? 2.4 : 1.6, 0, TAU); x.fill(); }
+      x.globalAlpha = 1; x.fillStyle = C.accent; x.beginPath(); x.arc(cx + Math.cos(angAt(f))*R, cy + Math.sin(angAt(f))*R, 3.2, 0, TAU); x.fill();
+      // a few possibility dots inside, thinning with the facts
+      const keep = [120, 48, 19, 13, 4, 2][n]; const sc = .38 + .62*Math.sqrt(keep/120); const rnd = rngOf(+c.l.id);
+      for(let i=0; i<120; i++){
+        const a = rnd()*TAU, rr = Math.sqrt(rnd()) * 29, sym = KINDS[Math.floor(rnd()*8)];
+        if(i >= keep) continue;
+        x.globalAlpha = C.dotA; x.fillStyle = C.tok[sym]; x.beginPath(); x.arc(cx + Math.cos(a)*rr*sc, cy + Math.sin(a)*rr*sc, keep > 40 ? 1.7 : 2.4, 0, TAU); x.fill();
+      }
+      x.globalAlpha = 1; x.lineCap = 'butt';
+    }
+  }
+  let lastPrev = 0;
+  (function prevLoop(now){
+    if(now - lastPrev > 60){ lastPrev = now; drawPreview(now); }
+    if(!REDUCE) requestAnimationFrame(prevLoop);
+  })(performance.now());
+
+  // ================= how-it-works schematic =================
+  (function schematic(){
+    let d = ''; for(let x = 0; x <= 1200; x += 46) d += `M${x} 40v8`; $('tkSol').setAttribute('d', d);
+    let r = '', c = '';
+    for(let x = 214; x <= 1006; x += 2){ if(x >= 700 && x <= 900) c += `M${x} 141v8`; else r += `M${x} 141v8`; }
+    $('tkRoll').setAttribute('d', r); $('tkClock').setAttribute('d', c);
+    if(REDUCE) return;
+    const path = $('route'), pulse = $('pulse'); const L = path.getTotalLength();
+    (function run(now){ const k = (now % 9000) / 9000; const p = path.getPointAtLength(easeIO(k) * L); pulse.setAttribute('cx', p.x); pulse.setAttribute('cy', p.y); requestAnimationFrame(run); })(performance.now());
+  })();
+
+  // ================= terminal =================
+  const term = $('term');
+  function showTerm(){
+    if(!term.classList.contains('wait')) return;
+    const lines = [...term.querySelectorAll('.ln')];
+    if(REDUCE){ term.classList.remove('wait'); return; }
+    lines.forEach((ln, i) => { ln.style.transitionDelay = (i === 0 ? 0 : 280 + i*90) + 'ms'; });
+    term.classList.remove('wait');
+  }
+  setTimeout(showTerm, 4000);
+  $('copy').addEventListener('click', () => {
+    const b = $('copy');
+    try{ navigator.clipboard.writeText('npx penlight verify 5').then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1400); }, () => {}); }catch(e){}
+  });
+
+  // ================= reveal, nav =================
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
+    if(e.isIntersecting){ e.target.classList.add('in'); if(e.target === term) showTerm(); io.unobserve(e.target); }
+  }), {rootMargin:'0px 0px -8% 0px'}) : null;
+  document.querySelectorAll('main section.sec .rv, #term').forEach(el => io ? io.observe(el) : el.classList.add('in'));
+  requestAnimationFrame(() => document.querySelectorAll('.hero .rv').forEach(el => el.classList.add('in')));
+  const nav = $('nav'); addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), {passive:true});
+
+  // ================= go =================
+  var onTheme = () => { fillCard(); if(!playing) draw(performance.now()); drawPreview(performance.now()); };
+  setTheme(root.getAttribute('data-theme'), false);
+  new ResizeObserver(() => { layout(); if(!playing) draw(performance.now()); }).observe(stage);
+  addEventListener('resize', layout);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layout(); if(!playing) draw(performance.now()); });
+  layout();
+  const now0 = performance.now();
+  if(REDUCE){ startMid(now0, 1500, 2); settleAll(); draw(now0); }
+  else { startMid(now0, 1080, 1); leadT = now0; requestAnimationFrame(frame); }
+})();
+</script>
+</body>
+</html>

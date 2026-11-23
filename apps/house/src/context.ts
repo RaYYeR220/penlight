@@ -74,6 +74,7 @@ class Store {
   presence = new Map<string, number>();
   events: FeedEvent[] = [];
   faucetGiven: Record<string, number> = {};
+  sponsored: Record<string, number> = {};
   faucetTimes: number[] = [];
   lotTimes: number[] = [];
   takeLatencies: number[] = [];
@@ -83,6 +84,7 @@ class Store {
     try {
       const j = JSON.parse(fs.readFileSync(this.file, "utf8"));
       this.faucetGiven = j.faucetGiven ?? {};
+      this.sponsored = j.sponsored ?? {};
       (j.finished ?? []).forEach((id: number) => this.finished.add(id));
     } catch {
       /* first run */
@@ -90,7 +92,7 @@ class Store {
   }
   save() {
     fs.mkdirSync(config.dataDir, { recursive: true });
-    fs.writeFileSync(this.file, JSON.stringify({ faucetGiven: this.faucetGiven, finished: [...this.finished] }));
+    fs.writeFileSync(this.file, JSON.stringify({ faucetGiven: this.faucetGiven, sponsored: this.sponsored, finished: [...this.finished] }));
   }
   event(e: Omit<FeedEvent, "at">) {
     this.events.push({ at: Date.now(), ...e });

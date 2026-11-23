@@ -186,8 +186,8 @@ app.post("/api/relay", async (c) => {
 });
 
 // ── withdrawal sponsor: a little devnet SOL so a browser player can pay the
-//    base-layer fees of moving their winnings out of the rollup to Solana ──
-const sponsored = new Map<string, number>();
+//    base-layer fees of moving what they WON out of the rollup to Solana ──
+const sponsorByIp = new Map<string, number[]>();
 let sponsorTimes: number[] = [];
 app.post("/api/sponsor-withdraw", async (c) => {
   const body = await c.req.json().catch(() => ({}));
@@ -198,21 +198,33 @@ app.post("/api/sponsor-withdraw", async (c) => {
     return c.json({ error: "owner must be a public key" }, 400);
   }
   const k = owner.toBase58();
-  if (!store.faucetGiven[k]) return c.json({ error: "get test USDC from the faucet first" }, 403);
-  if (Date.now() - (sponsored.get(k) ?? 0) < 12 * 3_600_000) return c.json({ error: "already sponsored recently" }, 409);
+  const ip = c.req.header("x-forwarded-for")?.split(",").pop()?.trim() || "local";
   const hourAgo = Date.now() - 3_600_000;
+  const mine = (sponsorByIp.get(ip) ?? []).filter((t) => t > hourAgo);
   sponsorTimes = sponsorTimes.filter((t) => t > hourAgo);
-  if (sponsorTimes.length >= 20) return c.json({ error: "sponsor is busy, try again later" }, 429);
-  const kinds = Math.min(Math.max(Number(body.kinds) || 1, 1), 8);
-  const lamports = kinds * 5_000_000 + 1_000_000;
-  sponsored.set(k, Date.now());
+  if (mine.length >= 3 || sponsorTimes.length >= 20) return c.json({ error: "sponsor is busy, try again later" }, 429);
+  if (Date.now() - (store.sponsored[k] ?? 0) < 12 * 3_600_000) return c.json({ error: "already sponsored recently" }, 409);
+  // Only for tokens this player actually won: count the kinds across their delivered lots.
+  const kinds = new Set<number>();
+  for (const l of store.lots.values()) {
+    if (l.status !== STATUS.DELIVERED || !l.winner.equals(owner)) continue;
+    l.amounts.forEach((a, i) => a > 0n && kinds.add(i));
+  }
+  if (kinds.size === 0) return c.json({ error: "nothing won to withdraw yet" }, 403);
+  if ((await base.getBalance(house.publicKey)) < 500_000_000) return c.json({ error: "sponsor is out of devnet SOL for now" }, 503);
+  const lamports = kinds.size * 5_000_000 + 1_000_000;
+  store.sponsored[k] = Date.now();
+  store.save();
+  mine.push(Date.now());
+  sponsorByIp.set(ip, mine);
   sponsorTimes.push(Date.now());
   try {
     const { SystemProgram } = await import("@solana/web3.js");
     const signature = await sendAndConfirmTransaction(base, new Transaction().add(SystemProgram.transfer({ fromPubkey: house.publicKey, toPubkey: owner, lamports })), [house]);
-    return c.json({ signature, lamports });
+    return c.json({ signature, lamports, kinds: kinds.size });
   } catch (e) {
-    sponsored.delete(k);
+    delete store.sponsored[k];
+    store.save();
     return c.json({ error: (e as Error).message.slice(0, 160) }, 502);
   }
 });

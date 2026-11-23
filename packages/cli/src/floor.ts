@@ -642,7 +642,7 @@ export class Wallet {
 
 /** Asks the House to privately transfer test USDC into `owner`'s rollup balance. */
 export async function faucet(owner: PublicKey, houseUrl: string = settingsFromEnv().houseUrl): Promise<{ signature: string; amountUsd: number }> {
-  const url = `${houseUrl}/api/faucet`;
+  const url = `${houseUrl}/faucet`;
   let res: Response;
   try {
     res = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ owner: owner.toBase58() }) });

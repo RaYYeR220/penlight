@@ -4,7 +4,7 @@
  * from their disclosed facts, take a lot, fund itself and verify results.
  *
  *   PENLIGHT_KEYPAIR     the agent's keypair file (default ~/.penlight/agent.json, created on first use)
- *   PENLIGHT_HOUSE_URL   House API for the faucet (default https://penlight-app.vercel.app/api/house)
+ *   PENLIGHT_HOUSE_URL   House API base for the faucet (default https://penlight-app.vercel.app/api/house)
  */
 import "./stdout-guard.js";
 import fs from "node:fs";

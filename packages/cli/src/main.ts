@@ -31,7 +31,7 @@ Usage
   penlight holdings --key <path>               your rollup balances
 
 Environment
-  PENLIGHT_HOUSE_URL   House API for the faucet (default https://penlight-app.vercel.app/api/house)
+  PENLIGHT_HOUSE_URL   House API base for the faucet (default https://penlight-app.vercel.app/api/house)
   PENLIGHT_BASE_RPC    Solana devnet RPC
   PENLIGHT_TEE_RPC     private rollup RPC
 `;

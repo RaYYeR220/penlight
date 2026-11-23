@@ -1,0 +1,2392 @@
+/**
+ * Program IDL in camelCase format in order to be used in JS/TS.
+ *
+ * Note that this is only a type helper and is not the actual IDL. The original
+ * IDL can be found at `target/idl/penlight.json`.
+ */
+export type Penlight = {
+  "address": "B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt",
+  "metadata": {
+    "name": "penlight",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Sealed lots of real tokens, sold on a falling clock inside a private rollup"
+  },
+  "instructions": [
+    {
+      "name": "createHouseLot",
+      "docs": [
+        "The House opens a lot that the seed will pack from its pool."
+      ],
+      "discriminator": [
+        168,
+        229,
+        65,
+        219,
+        239,
+        219,
+        90,
+        172
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "house"
+          ]
+        },
+        {
+          "name": "house",
+          "writable": true
+        },
+        {
+          "name": "lot",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  111,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "house"
+              },
+              {
+                "kind": "account",
+                "path": "house.lotsCreated",
+                "account": "house"
+              }
+            ]
+          }
+        },
+        {
+          "name": "seal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "startPrice",
+          "type": "u64"
+        },
+        {
+          "name": "floorPrice",
+          "type": "u64"
+        },
+        {
+          "name": "durationSlots",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "createLot",
+      "docs": [
+        "A seller consigns a lot. The commitment binds its contents before anything",
+        "else can happen to it."
+      ],
+      "discriminator": [
+        127,
+        218,
+        254,
+        227,
+        228,
+        250,
+        69,
+        159
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "seller",
+          "signer": true
+        },
+        {
+          "name": "house",
+          "writable": true
+        },
+        {
+          "name": "lot",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  111,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "house"
+              },
+              {
+                "kind": "account",
+                "path": "house.lotsCreated",
+                "account": "house"
+              }
+            ]
+          }
+        },
+        {
+          "name": "seal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "commitment",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "startPrice",
+          "type": "u64"
+        },
+        {
+          "name": "floorPrice",
+          "type": "u64"
+        },
+        {
+          "name": "durationSlots",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "delegateLot",
+      "docs": [
+        "Hands the lot and its seal to the private rollup."
+      ],
+      "discriminator": [
+        97,
+        21,
+        198,
+        147,
+        249,
+        21,
+        155,
+        14
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "house"
+        },
+        {
+          "name": "bufferLot",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                150,
+                6,
+                197,
+                29,
+                140,
+                242,
+                153,
+                27,
+                74,
+                13,
+                110,
+                30,
+                173,
+                54,
+                109,
+                28,
+                102,
+                208,
+                28,
+                16,
+                150,
+                153,
+                48,
+                102,
+                79,
+                14,
+                31,
+                102,
+                153,
+                189,
+                229,
+                155
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegationRecordLot",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegationProgram"
+            }
+          }
+        },
+        {
+          "name": "delegationMetadataLot",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegationProgram"
+            }
+          }
+        },
+        {
+          "name": "lot",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  111,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "house"
+              },
+              {
+                "kind": "arg",
+                "path": "id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bufferSeal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "seal"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                150,
+                6,
+                197,
+                29,
+                140,
+                242,
+                153,
+                27,
+                74,
+                13,
+                110,
+                30,
+                173,
+                54,
+                109,
+                28,
+                102,
+                208,
+                28,
+                16,
+                150,
+                153,
+                48,
+                102,
+                79,
+                14,
+                31,
+                102,
+                153,
+                189,
+                229,
+                155
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegationRecordSeal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "seal"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegationProgram"
+            }
+          }
+        },
+        {
+          "name": "delegationMetadataSeal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "seal"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegationProgram"
+            }
+          }
+        },
+        {
+          "name": "seal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ]
+          }
+        },
+        {
+          "name": "validator",
+          "optional": true
+        },
+        {
+          "name": "ownerProgram",
+          "address": "B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt"
+        },
+        {
+          "name": "delegationProgram",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "delegatePool",
+      "docs": [
+        "Hands the pool ledger to the private rollup."
+      ],
+      "discriminator": [
+        209,
+        44,
+        8,
+        221,
+        183,
+        173,
+        33,
+        244
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "house"
+          ]
+        },
+        {
+          "name": "house"
+        },
+        {
+          "name": "bufferPool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                150,
+                6,
+                197,
+                29,
+                140,
+                242,
+                153,
+                27,
+                74,
+                13,
+                110,
+                30,
+                173,
+                54,
+                109,
+                28,
+                102,
+                208,
+                28,
+                16,
+                150,
+                153,
+                48,
+                102,
+                79,
+                14,
+                31,
+                102,
+                153,
+                189,
+                229,
+                155
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegationRecordPool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegationProgram"
+            }
+          }
+        },
+        {
+          "name": "delegationMetadataPool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegationProgram"
+            }
+          }
+        },
+        {
+          "name": "pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "house"
+              }
+            ]
+          }
+        },
+        {
+          "name": "validator",
+          "optional": true
+        },
+        {
+          "name": "ownerProgram",
+          "address": "B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt"
+        },
+        {
+          "name": "delegationProgram",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "deliver",
+      "docs": [
+        "Moves an opened lot's tokens: to the winner if it sold, back to the seller",
+        "if it didn't. House lots pay out of (or release) their pool reservation.",
+        "Permissionless.",
+        "remaining_accounts: [source_ata, destination_ata] for each slot with an",
+        "amount, in slot order (none for an unsold House lot)."
+      ],
+      "discriminator": [
+        250,
+        131,
+        222,
+        57,
+        211,
+        229,
+        209,
+        147
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "house",
+          "relations": [
+            "lot"
+          ]
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "house"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "goLive",
+      "docs": [
+        "Posts the sealed lot to Solana and starts the clock a moment later.",
+        "Permissionless."
+      ],
+      "discriminator": [
+        126,
+        98,
+        10,
+        43,
+        92,
+        184,
+        85,
+        248
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "magicProgram",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magicContext",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initHouse",
+      "docs": [
+        "Creates the House and its pool ledger."
+      ],
+      "discriminator": [
+        179,
+        199,
+        91,
+        87,
+        163,
+        192,
+        163,
+        183
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "house",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "house"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "usdcMint",
+          "type": "pubkey"
+        },
+        {
+          "name": "catalogue",
+          "type": {
+            "array": [
+              {
+                "defined": {
+                  "name": "catalogueEntry"
+                }
+              },
+              8
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "onShuffle",
+      "docs": [
+        "VRF callback. The seed goes into the seal, not the public lot: nobody can",
+        "predict the facts before they come out."
+      ],
+      "discriminator": [
+        230,
+        185,
+        217,
+        209,
+        84,
+        61,
+        63,
+        96
+      ],
+      "accounts": [
+        {
+          "name": "vrfProgramIdentity",
+          "signer": true,
+          "address": "7DzFpuj9XXi2Bt18vAdh1ZcRKPFeiyEBheLdCoNZmyCi"
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "seal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "randomness",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "open",
+      "docs": [
+        "Asks the VRF oracle — from inside the enclave — for the seed that decides",
+        "which facts the lot will disclose (and, for House lots, what goes in)."
+      ],
+      "discriminator": [
+        228,
+        220,
+        155,
+        71,
+        199,
+        189,
+        60,
+        45
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "seal",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracleQueue",
+          "writable": true
+        },
+        {
+          "name": "programIdentity",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "vrfProgram",
+          "address": "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz"
+        },
+        {
+          "name": "slotHashes",
+          "address": "SysvarS1otHashes111111111111111111111111111"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "clientSeed",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "pack",
+      "docs": [
+        "A seller moves their tokens into the lot's own accounts, checked against",
+        "the commitment (which covers every catalogue slot, empty ones included).",
+        "remaining_accounts: [seller_ata, lot_ata] for each slot with amount > 0,",
+        "in slot order. The rollup does not show this transaction to outsiders."
+      ],
+      "discriminator": [
+        224,
+        88,
+        97,
+        43,
+        148,
+        12,
+        19,
+        225
+      ],
+      "accounts": [
+        {
+          "name": "seller",
+          "signer": true,
+          "relations": [
+            "lot"
+          ]
+        },
+        {
+          "name": "house",
+          "relations": [
+            "lot"
+          ]
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "seal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "salt",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "amounts",
+          "type": {
+            "array": [
+              "u64",
+              8
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "packFromPool",
+      "docs": [
+        "House lots: the seed draws the contents from what the pool has free, and",
+        "reserves them. Permissionless.",
+        "remaining_accounts: pool_ata × SLOTS, feed × SLOTS."
+      ],
+      "discriminator": [
+        17,
+        40,
+        171,
+        240,
+        221,
+        73,
+        118,
+        145
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "house",
+          "relations": [
+            "lot"
+          ]
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "seal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ]
+          }
+        },
+        {
+          "name": "pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "house"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "poolPermission",
+      "docs": [
+        "Makes the pool ledger unreadable: no members, so only the program sees it."
+      ],
+      "discriminator": [
+        155,
+        90,
+        206,
+        70,
+        95,
+        186,
+        195,
+        110
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "pool",
+          "writable": true
+        },
+        {
+          "name": "permission",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  105,
+                  115,
+                  115,
+                  105,
+                  111,
+                  110,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                136,
+                161,
+                10,
+                196,
+                33,
+                152,
+                1,
+                214,
+                246,
+                106,
+                29,
+                60,
+                6,
+                152,
+                192,
+                102,
+                169,
+                175,
+                212,
+                217,
+                180,
+                252,
+                231,
+                71,
+                151,
+                141,
+                209,
+                5,
+                168,
+                212,
+                103,
+                82
+              ]
+            }
+          }
+        },
+        {
+          "name": "permissionProgram",
+          "address": "ACLseoPoyC3cBqoUtkbjZ4aDrkurZW86v19pXz2XQnp1"
+        },
+        {
+          "name": "ephemeralVault",
+          "writable": true,
+          "address": "MagicVau1t999999999999999999999999999999999"
+        },
+        {
+          "name": "magicProgram",
+          "address": "Magic11111111111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "processUndelegation",
+      "discriminator": [
+        196,
+        28,
+        41,
+        206,
+        48,
+        37,
+        51,
+        167
+      ],
+      "accounts": [
+        {
+          "name": "baseAccount",
+          "writable": true
+        },
+        {
+          "name": "buffer",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  110,
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101,
+                  45,
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "baseAccount"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                181,
+                183,
+                0,
+                225,
+                242,
+                87,
+                58,
+                192,
+                204,
+                6,
+                34,
+                1,
+                52,
+                74,
+                207,
+                151,
+                184,
+                53,
+                6,
+                235,
+                140,
+                229,
+                25,
+                152,
+                204,
+                98,
+                126,
+                24,
+                147,
+                128,
+                167,
+                62
+              ]
+            }
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "accountSeeds",
+          "type": {
+            "vec": "bytes"
+          }
+        }
+      ]
+    },
+    {
+      "name": "reveal",
+      "docs": [
+        "Writes every fact that is due into the public lot. Permissionless; the",
+        "facts are computed here, inside the enclave, from the seal and live prices.",
+        "remaining_accounts: feed × SLOTS."
+      ],
+      "discriminator": [
+        9,
+        35,
+        59,
+        190,
+        167,
+        249,
+        76,
+        115
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "house",
+          "relations": [
+            "lot"
+          ]
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "seal",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "sealPermission",
+      "docs": [
+        "Locks the seal behind a permission. Consigned lots let their seller read it",
+        "(they packed it); House lots have no reader at all."
+      ],
+      "discriminator": [
+        37,
+        35,
+        209,
+        187,
+        78,
+        161,
+        183,
+        183
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "seal",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ]
+          }
+        },
+        {
+          "name": "permission",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  105,
+                  115,
+                  115,
+                  105,
+                  111,
+                  110,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "seal"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                136,
+                161,
+                10,
+                196,
+                33,
+                152,
+                1,
+                214,
+                246,
+                106,
+                29,
+                60,
+                6,
+                152,
+                192,
+                102,
+                169,
+                175,
+                212,
+                217,
+                180,
+                252,
+                231,
+                71,
+                151,
+                141,
+                209,
+                5,
+                168,
+                212,
+                103,
+                82
+              ]
+            }
+          }
+        },
+        {
+          "name": "permissionProgram",
+          "address": "ACLseoPoyC3cBqoUtkbjZ4aDrkurZW86v19pXz2XQnp1"
+        },
+        {
+          "name": "ephemeralVault",
+          "writable": true,
+          "address": "MagicVau1t999999999999999999999999999999999"
+        },
+        {
+          "name": "magicProgram",
+          "address": "Magic11111111111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "setCatalogue",
+      "discriminator": [
+        20,
+        181,
+        187,
+        92,
+        11,
+        136,
+        55,
+        166
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "house"
+          ]
+        },
+        {
+          "name": "house",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "catalogue",
+          "type": {
+            "array": [
+              {
+                "defined": {
+                  "name": "catalogueEntry"
+                }
+              },
+              8
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle",
+      "docs": [
+        "Commits the finished lot to Solana and returns it there for good."
+      ],
+      "discriminator": [
+        175,
+        42,
+        185,
+        87,
+        144,
+        131,
+        102,
+        212
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "magicProgram",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magicContext",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "take",
+      "docs": [
+        "The race. Pays the clock price of the block this lands in and takes the",
+        "lot. Payment and title move in this one transaction."
+      ],
+      "discriminator": [
+        149,
+        226,
+        52,
+        104,
+        6,
+        142,
+        230,
+        39
+      ],
+      "accounts": [
+        {
+          "name": "buyer",
+          "signer": true
+        },
+        {
+          "name": "house",
+          "relations": [
+            "lot"
+          ]
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "buyerUsdc",
+          "writable": true
+        },
+        {
+          "name": "sellerUsdc",
+          "writable": true
+        },
+        {
+          "name": "tokenProgram",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "maxPrice",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "unseal",
+      "docs": [
+        "Opens a sold lot — or a lot whose clock ran out — inside the enclave:",
+        "contents, salt and seed become public and the live oracle values them.",
+        "Permissionless. remaining_accounts: feed × SLOTS."
+      ],
+      "discriminator": [
+        4,
+        93,
+        197,
+        69,
+        247,
+        111,
+        152,
+        174
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "house",
+          "relations": [
+            "lot"
+          ]
+        },
+        {
+          "name": "lot",
+          "writable": true
+        },
+        {
+          "name": "seal",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lot"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "house",
+      "discriminator": [
+        21,
+        145,
+        94,
+        109,
+        254,
+        199,
+        210,
+        151
+      ]
+    },
+    {
+      "name": "lot",
+      "discriminator": [
+        2,
+        198,
+        93,
+        153,
+        205,
+        31,
+        101,
+        252
+      ]
+    },
+    {
+      "name": "pool",
+      "discriminator": [
+        241,
+        154,
+        109,
+        4,
+        17,
+        177,
+        109,
+        188
+      ]
+    },
+    {
+      "name": "seal",
+      "discriminator": [
+        162,
+        149,
+        250,
+        10,
+        100,
+        125,
+        36,
+        168
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "sold",
+      "discriminator": [
+        205,
+        203,
+        210,
+        202,
+        96,
+        11,
+        192,
+        10
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "badPrices",
+      "msg": "start price must exceed a non-zero floor"
+    },
+    {
+      "code": 6001,
+      "name": "badDuration",
+      "msg": "clock length must be positive"
+    },
+    {
+      "code": 6002,
+      "name": "wrongStatus",
+      "msg": "lot is not in the right state for this"
+    },
+    {
+      "code": 6003,
+      "name": "badAccounts",
+      "msg": "account list does not match the lot"
+    },
+    {
+      "code": 6004,
+      "name": "commitmentMismatch",
+      "msg": "contents do not match the commitment"
+    },
+    {
+      "code": 6005,
+      "name": "priceAboveLimit",
+      "msg": "clock price is above your limit"
+    },
+    {
+      "code": 6006,
+      "name": "sellerCannotTake",
+      "msg": "the seller cannot take their own lot"
+    },
+    {
+      "code": 6007,
+      "name": "notHouseAuthority",
+      "msg": "only the house authority can do this"
+    },
+    {
+      "code": 6008,
+      "name": "badCatalogue",
+      "msg": "catalogue entry is malformed"
+    },
+    {
+      "code": 6009,
+      "name": "emptyLot",
+      "msg": "the lot has no contents"
+    },
+    {
+      "code": 6010,
+      "name": "tooEarly",
+      "msg": "the clock has not reached this point yet"
+    },
+    {
+      "code": 6011,
+      "name": "oracleWrongFeed",
+      "msg": "oracle account is not the expected feed"
+    },
+    {
+      "code": 6012,
+      "name": "oracleUnverified",
+      "msg": "oracle update is not a verified republisher update"
+    },
+    {
+      "code": 6013,
+      "name": "oracleStale",
+      "msg": "oracle price is stale"
+    },
+    {
+      "code": 6014,
+      "name": "oracleBadValue",
+      "msg": "oracle price is out of range"
+    },
+    {
+      "code": 6015,
+      "name": "overflow",
+      "msg": "arithmetic overflow"
+    },
+    {
+      "code": 6016,
+      "name": "poolTooSmall",
+      "msg": "the pool cannot cover a draw"
+    }
+  ],
+  "types": [
+    {
+      "name": "catalogueEntry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "feed",
+            "docs": [
+              "MagicBlock oracle feed account (also the stored feed id)."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "decimals",
+            "type": "u8"
+          },
+          {
+            "name": "expo",
+            "docs": [
+              "Magnitude of the feed-list exponent (price = raw / 10^expo)."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "kind",
+            "type": "u8"
+          },
+          {
+            "name": "symbol",
+            "type": {
+              "array": [
+                "u8",
+                8
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hintRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "kind",
+            "type": "u8"
+          },
+          {
+            "name": "sym",
+            "type": "u8"
+          },
+          {
+            "name": "a",
+            "type": "u64"
+          },
+          {
+            "name": "b",
+            "type": "u64"
+          },
+          {
+            "name": "slot",
+            "docs": [
+              "The clock slot this fact was due at."
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "house",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "usdcMint",
+            "type": "pubkey"
+          },
+          {
+            "name": "catalogue",
+            "type": {
+              "array": [
+                {
+                  "defined": {
+                    "name": "catalogueEntry"
+                  }
+                },
+                8
+              ]
+            }
+          },
+          {
+            "name": "lotsCreated",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "poolBump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "lot",
+      "docs": [
+        "Public state of a lot. Everything a bidder needs is here; nothing in here says",
+        "what is inside until the lot is opened."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "house",
+            "type": "pubkey"
+          },
+          {
+            "name": "seller",
+            "type": "pubkey"
+          },
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "origin",
+            "type": "u8"
+          },
+          {
+            "name": "status",
+            "type": "u8"
+          },
+          {
+            "name": "packed",
+            "type": "bool"
+          },
+          {
+            "name": "commitment",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "startPrice",
+            "type": "u64"
+          },
+          {
+            "name": "floorPrice",
+            "type": "u64"
+          },
+          {
+            "name": "durationSlots",
+            "type": "u64"
+          },
+          {
+            "name": "openSlot",
+            "type": "u64"
+          },
+          {
+            "name": "hintsRevealed",
+            "type": "u8"
+          },
+          {
+            "name": "hints",
+            "type": {
+              "array": [
+                {
+                  "defined": {
+                    "name": "hintRecord"
+                  }
+                },
+                5
+              ]
+            }
+          },
+          {
+            "name": "hintPrices",
+            "docs": [
+              "Oracle prices each fact was computed with (public data), so anyone can",
+              "re-derive every fact exactly once the lot is opened."
+            ],
+            "type": {
+              "array": [
+                {
+                  "array": [
+                    "u64",
+                    8
+                  ]
+                },
+                5
+              ]
+            }
+          },
+          {
+            "name": "winner",
+            "type": "pubkey"
+          },
+          {
+            "name": "paid",
+            "type": "u64"
+          },
+          {
+            "name": "soldSlot",
+            "type": "u64"
+          },
+          {
+            "name": "valueAtDelivery",
+            "docs": [
+              "Micro-dollar value of the contents at delivery, from the live oracle."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "deliveryPrices",
+            "type": {
+              "array": [
+                "u64",
+                8
+              ]
+            }
+          },
+          {
+            "name": "amounts",
+            "docs": [
+              "Published when the lot is opened."
+            ],
+            "type": {
+              "array": [
+                "u64",
+                8
+              ]
+            }
+          },
+          {
+            "name": "salt",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "seed",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "createdAt",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "sealBump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "pool",
+      "docs": [
+        "The House pool's private ledger. Pool tokens stay in the pool's own accounts;",
+        "a House lot is a reservation against them until it is delivered."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "house",
+            "type": "pubkey"
+          },
+          {
+            "name": "reserved",
+            "type": {
+              "array": [
+                "u64",
+                8
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "seal",
+      "docs": [
+        "Private state of a lot. Lives in the enclave behind a permission with no",
+        "readers; only the program touches it."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "lot",
+            "type": "pubkey"
+          },
+          {
+            "name": "salt",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "amounts",
+            "type": {
+              "array": [
+                "u64",
+                8
+              ]
+            }
+          },
+          {
+            "name": "seed",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "seeded",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sold",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "lot",
+            "type": "pubkey"
+          },
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "winner",
+            "type": "pubkey"
+          },
+          {
+            "name": "paid",
+            "type": "u64"
+          },
+          {
+            "name": "slot",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ]
+};

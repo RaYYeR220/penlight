@@ -1,0 +1,17 @@
+{
+  "network": "devnet",
+  "programId": "B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt",
+  "houseAuthority": "MxkbjWpF3RRrk1yaAUjwqCLQpGz8ewTJu65WnWsnJt6",
+  "house": "4VZc2fkRBy5sXWdiTPqFrafLGaXboAVF9VhEoNMNa1Zf",
+  "usdcMint": "4BnQMrHDeCSaZooN1kYUMKAjJK2H6rJw3FmEj3h5pkSK",
+  "mints": [
+    "6cQer29knGsiCYjyKG2Qhaj1uW5mS7LY84aDwPRLGdbw",
+    "Duh1QSrqGW9USDzjavDWj8Zhu1JFkFfBq9X2XNZJs8BH",
+    "EcgxFWWge7XJaFpV829226wvANX6kY7EoEAJ8ANztqDg",
+    "HYqdCXZaLq18iwVrZv5uLz7JcvwznXcNtFvsLGDxvssu",
+    "BeTd3KKeL6dkmnNT4v9EKuLdZPDgk6LKZbRtiHFjhy8e",
+    "AeFuqfUFYSTraXgJYT9ig7eBYmQF3cPB8JkZEnYhfcRw",
+    "c9HDAi8xSHQdiEnsehJw9QS9JjdTZ5nq6eLUaKVbW4i",
+    "CpbWZCKKh5HZpxenchn7mStEqapyYqpLmBwGfNXgVVq6"
+  ]
+}

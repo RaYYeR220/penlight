@@ -36,7 +36,7 @@ use constants::*;
 use error::PenlightError;
 use state::*;
 
-declare_id!("B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt");
+declare_id!("2gqehWewPNJg9t6XtnniyNk8iuC5p6ew1q4XrNHLopkt");
 
 const PROGRAM_IDENTITY: Pubkey = program_identity_pubkey(&crate::ID);
 /// The VRF program signs callbacks with this PDA. Kept in a `const` item so it is
@@ -52,7 +52,7 @@ pub mod penlight {
     // ───────────────────────────── base layer ─────────────────────────────
 
     /// Creates the House and its pool ledger.
-    pub fn init_house(ctx: Context<InitHouse>, usdc_mint: Pubkey, catalogue: [CatalogueEntry; SLOTS]) -> Result<()> {
+    pub fn init_house(ctx: Context<InitHouse>, usdc_mint: Pubkey, validator: Pubkey, catalogue: [CatalogueEntry; SLOTS]) -> Result<()> {
         check_catalogue(&catalogue)?;
         let house_key = ctx.accounts.house.key();
         let house = &mut ctx.accounts.house;
@@ -60,6 +60,7 @@ pub mod penlight {
         house.usdc_mint = usdc_mint;
         house.catalogue = catalogue;
         house.lots_created = 0;
+        house.validator = validator;
         house.bump = ctx.bumps.house;
         house.pool_bump = ctx.bumps.pool;
         let pool = &mut ctx.accounts.pool;
@@ -69,7 +70,10 @@ pub mod penlight {
         fund_permission_rent(&ctx.accounts.authority, &ctx.accounts.pool.to_account_info(), &ctx.accounts.system_program)
     }
 
+    /// Only before the first lot: every lot reads the catalogue, so it never
+    /// changes under a lot.
     pub fn set_catalogue(ctx: Context<SetCatalogue>, catalogue: [CatalogueEntry; SLOTS]) -> Result<()> {
+        require!(ctx.accounts.house.lots_created == 0, PenlightError::CatalogueFrozen);
         check_catalogue(&catalogue)?;
         ctx.accounts.house.catalogue = catalogue;
         Ok(())
@@ -78,7 +82,7 @@ pub mod penlight {
     /// Hands the pool ledger to the private rollup.
     pub fn delegate_pool(ctx: Context<DelegatePool>) -> Result<()> {
         let house = ctx.accounts.house.key();
-        let validator = ctx.accounts.validator.as_ref().map(|v| v.key());
+        let validator = Some(ctx.accounts.validator.key());
         ctx.accounts.delegate_pool(
             &ctx.accounts.authority,
             &[POOL_SEED, house.as_ref()],
@@ -138,7 +142,7 @@ pub mod penlight {
     pub fn delegate_lot(ctx: Context<DelegateLot>, id: u64) -> Result<()> {
         let house = ctx.accounts.house.key();
         let lot_key = ctx.accounts.lot.key();
-        let validator = ctx.accounts.validator.as_ref().map(|v| v.key());
+        let validator = Some(ctx.accounts.validator.key());
         ctx.accounts.delegate_lot(
             &ctx.accounts.payer,
             &[LOT_SEED, house.as_ref(), &id.to_le_bytes()],
@@ -156,7 +160,8 @@ pub mod penlight {
 
     /// Makes the pool ledger unreadable: no members, so only the program sees it.
     pub fn pool_permission(ctx: Context<PoolPermission>) -> Result<()> {
-        if ctx.accounts.permission.lamports() > 0 {
+        if permission_exists(&ctx.accounts.permission) {
+            ctx.accounts.pool.private = true;
             return Ok(());
         }
         let house = ctx.accounts.pool.house;
@@ -172,13 +177,15 @@ pub mod penlight {
             args: EphemeralMembersArgs { is_private: true, members: vec![] },
         }
         .invoke_signed(&[seeds])?;
+        ctx.accounts.pool.private = true;
         Ok(())
     }
 
     /// Locks the seal behind a permission. Consigned lots let their seller read it
     /// (they packed it); House lots have no reader at all.
     pub fn seal_permission(ctx: Context<SealPermission>) -> Result<()> {
-        if ctx.accounts.permission.lamports() > 0 {
+        if permission_exists(&ctx.accounts.permission) {
+            ctx.accounts.lot.sealed = true;
             return Ok(());
         }
         let lot = &ctx.accounts.lot;
@@ -203,6 +210,7 @@ pub mod penlight {
             args: EphemeralMembersArgs { is_private: true, members },
         }
         .invoke_signed(&[lot_seeds, seal_seeds])?;
+        ctx.accounts.lot.sealed = true;
         Ok(())
     }
 
@@ -215,6 +223,7 @@ pub mod penlight {
         {
             let lot = &ctx.accounts.lot;
             require!(lot.origin == origin::CONSIGNED && lot.status == status::CREATED && !lot.packed, PenlightError::WrongStatus);
+            require!(lot.sealed, PenlightError::NotSealed);
         }
         let present = amounts.iter().filter(|a| **a > 0).count();
         require!(present > 0, PenlightError::EmptyLot);
@@ -260,6 +269,7 @@ pub mod penlight {
         {
             let lot = &ctx.accounts.lot;
             require!(lot.status == status::CREATED, PenlightError::WrongStatus);
+            require!(lot.sealed, PenlightError::NotSealed);
             require!(lot.origin == origin::HOUSE || lot.packed, PenlightError::WrongStatus);
         }
         let ix = create_request_randomness_ix_const(
@@ -309,6 +319,7 @@ pub mod penlight {
             let lot = &ctx.accounts.lot;
             require!(lot.origin == origin::HOUSE && lot.status == status::SHUFFLED && !lot.packed, PenlightError::WrongStatus);
         }
+        require!(ctx.accounts.pool.private, PenlightError::NotSealed);
         let rem = ctx.remaining_accounts;
         require!(rem.len() == SLOTS * 2, PenlightError::BadAccounts);
         let pool_key = ctx.accounts.pool.key();
@@ -529,6 +540,12 @@ pub mod penlight {
 
 // ───────────────────────────── helpers ─────────────────────────────
 
+/// A permission counts only if the permission program owns an initialized
+/// account at its address — lamports alone can be sent there by anyone.
+fn permission_exists(info: &AccountInfo) -> bool {
+    *info.owner == PERMISSION_PROGRAM_ID && !info.data_is_empty()
+}
+
 fn check_catalogue(catalogue: &[CatalogueEntry; SLOTS]) -> Result<()> {
     for e in catalogue.iter() {
         require!(e.mint != Pubkey::default() && e.feed != Pubkey::default(), PenlightError::BadCatalogue);
@@ -671,8 +688,9 @@ pub struct DelegatePool<'info> {
     /// CHECK: the pool PDA; delegated as-is.
     #[account(mut, del, seeds = [POOL_SEED, house.key().as_ref()], bump)]
     pub pool: UncheckedAccount<'info>,
-    /// CHECK: validator identity, checked by the delegation program.
-    pub validator: Option<UncheckedAccount<'info>>,
+    /// CHECK: must be the House's private-rollup validator.
+    #[account(address = house.validator @ PenlightError::WrongValidator)]
+    pub validator: UncheckedAccount<'info>,
 }
 
 #[derive(Accounts)]
@@ -720,16 +738,16 @@ pub struct CreateHouseLot<'info> {
 pub struct DelegateLot<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
-    /// CHECK: only used for the PDA seeds.
-    pub house: UncheckedAccount<'info>,
+    pub house: Box<Account<'info, House>>,
     /// CHECK: the lot PDA; delegated as-is.
     #[account(mut, del, seeds = [LOT_SEED, house.key().as_ref(), &id.to_le_bytes()], bump)]
     pub lot: UncheckedAccount<'info>,
     /// CHECK: the lot's seal PDA; delegated as-is.
     #[account(mut, del, seeds = [SEAL_SEED, lot.key().as_ref()], bump)]
     pub seal: UncheckedAccount<'info>,
-    /// CHECK: validator identity, checked by the delegation program.
-    pub validator: Option<UncheckedAccount<'info>>,
+    /// CHECK: must be the House's private-rollup validator, where the seal stays private.
+    #[account(address = house.validator @ PenlightError::WrongValidator)]
+    pub validator: UncheckedAccount<'info>,
 }
 
 #[derive(Accounts)]

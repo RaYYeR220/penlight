@@ -22,6 +22,8 @@ pub struct House {
     pub usdc_mint: Pubkey,
     pub catalogue: [CatalogueEntry; SLOTS],
     pub lots_created: u64,
+    /// The private-rollup (TEE) validator lots and the pool may be delegated to.
+    pub validator: Pubkey,
     pub bump: u8,
     pub pool_bump: u8,
 }
@@ -54,6 +56,8 @@ pub mod status {
 pub struct Pool {
     pub house: Pubkey,
     pub reserved: [u64; SLOTS],
+    /// Set once the ledger's no-reader permission exists.
+    pub private: bool,
     pub bump: u8,
 }
 
@@ -77,6 +81,8 @@ pub struct Lot {
     pub id: u64,
     pub origin: u8,
     pub status: u8,
+    /// Set once the seal's permission exists; nothing touches the seal before.
+    pub sealed: bool,
     pub packed: bool,
     pub commitment: [u8; 32],
     pub start_price: u64,

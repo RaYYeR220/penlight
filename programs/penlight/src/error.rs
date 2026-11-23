@@ -36,4 +36,10 @@ pub enum PenlightError {
     Overflow,
     #[msg("the pool cannot cover a draw")]
     PoolTooSmall,
+    #[msg("the private permission must exist before this")]
+    NotSealed,
+    #[msg("lots may only be delegated to the House's private-rollup validator")]
+    WrongValidator,
+    #[msg("the catalogue is fixed once lots exist")]
+    CatalogueFrozen,
 }

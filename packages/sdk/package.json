@@ -1,0 +1,20 @@
+{
+  "name": "@penlight/sdk",
+  "version": "0.1.0",
+  "description": "Client SDK for Penlight lots on Solana + MagicBlock Private Ephemeral Rollups",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "test": "node --import tsx --test test/*.test.ts" },
+  "dependencies": {
+    "@coral-xyz/anchor": "0.32.1",
+    "@magicblock-labs/ephemeral-rollups-sdk": "0.18.0",
+    "@noble/hashes": "^1.8.0",
+    "@solana/spl-token": "0.4.14",
+    "@solana/web3.js": "1.98.4",
+    "tweetnacl": "^1.0.3"
+  },
+  "devDependencies": { "tsx": "^4.20.0", "typescript": "^5.9.0", "@types/node": "^22.0.0" }
+}

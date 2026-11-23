@@ -1,0 +1,17 @@
+{
+  "name": "penlight",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "npm run test -w @penlight/sdk",
+    "typecheck": "tsc -p packages/sdk --noEmit"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "type": "module"
+}

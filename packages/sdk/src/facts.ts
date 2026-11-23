@@ -2,8 +2,8 @@
  * The facts a lot discloses — a line-for-line port of programs/penlight/src/hints.rs,
  * checked against vectors the Rust tests write out.
  */
-import { HINTS, KIND_MEME, SLOTS } from "./constants.js";
-import { Stream } from "./rng.js";
+import { HINTS, KIND_MEME, SLOTS } from "./constants";
+import { Stream } from "./rng";
 
 export const H = {
   COUNT: 1,

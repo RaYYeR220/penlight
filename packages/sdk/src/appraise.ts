@@ -7,9 +7,9 @@
  * every fact (at the prices each fact was computed with), and read the value
  * distribution off what survives. Plain rejection sampling: no model, no tuning.
  */
-import { CATALOGUE, SLOTS } from "./constants.js";
-import { holds, type Fact, type Item } from "./facts.js";
-import { draw, valueMicros, type PoolSlot } from "./math.js";
+import { CATALOGUE, SLOTS } from "./constants";
+import { holds, type Fact, type Item } from "./facts";
+import { draw, valueMicros, type PoolSlot } from "./math";
 
 export interface Appraisal {
   /** Draws consistent with every fact. */

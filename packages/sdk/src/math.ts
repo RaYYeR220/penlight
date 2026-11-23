@@ -1,8 +1,8 @@
 /** Clock, oracle scaling, pool draw and commitment — ports of the program's pure modules. */
 import { sha256 } from "@noble/hashes/sha2";
 import { PublicKey } from "@solana/web3.js";
-import { GRACE_BPS, HINT_AT_BPS, HINTS, SLOTS, USD_DECIMALS } from "./constants.js";
-import { Stream } from "./rng.js";
+import { GRACE_BPS, HINT_AT_BPS, HINTS, SLOTS, USD_DECIMALS } from "./constants";
+import { Stream } from "./rng";
 
 export interface ClockParams {
   startPrice: bigint;

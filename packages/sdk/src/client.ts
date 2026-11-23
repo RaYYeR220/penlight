@@ -1,4 +1,5 @@
-import anchor, { type Idl } from "@coral-xyz/anchor";
+import * as anchorNs from "@coral-xyz/anchor";
+import type { Idl } from "@coral-xyz/anchor";
 import {
   ComputeBudgetProgram,
   Connection,
@@ -17,9 +18,12 @@ import {
   MAGIC_PROGRAM_ID,
 } from "@magicblock-labs/ephemeral-rollups-sdk";
 import idlJson from "./idl/penlight.json" with { type: "json" };
-import { CATALOGUE, HINTS, MAGICBLOCK, NETWORK, PROGRAM_ID, SEEDS, SLOTS, feedAddress } from "./constants.js";
-import { type ClockParams } from "./math.js";
+import { CATALOGUE, HINTS, MAGICBLOCK, NETWORK, PROGRAM_ID, SEEDS, SLOTS, feedAddress } from "./constants";
+import { type ClockParams } from "./math";
 
+// Bundlers load anchor's ESM build (named exports); Node loads its CJS build
+// (everything under `default`). Accept either.
+const anchor: typeof anchorNs = (anchorNs as { BN?: unknown }).BN ? anchorNs : (anchorNs as unknown as { default: typeof anchorNs }).default;
 const { AnchorProvider, BN, BorshAccountsCoder, Program } = anchor;
 type BN = InstanceType<typeof anchor.BN>;
 type Program = InstanceType<typeof anchor.Program>;

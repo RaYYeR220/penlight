@@ -1,7 +1,7 @@
 import { Connection, Keypair, PublicKey, Transaction, TransactionInstruction, type Signer } from "@solana/web3.js";
 import { getAuthToken } from "@magicblock-labs/ephemeral-rollups-sdk";
 import nacl from "tweetnacl";
-import { NETWORK } from "./constants.js";
+import { NETWORK } from "./constants";
 
 export type SignMessage = (message: Uint8Array) => Promise<Uint8Array>;
 

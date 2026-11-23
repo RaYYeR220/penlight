@@ -1,7 +1,7 @@
-import { CATALOGUE, STATUS } from "./constants.js";
-import { describe, holds, render, type Item } from "./facts.js";
-import { commitment, priceAt, valueMicros } from "./math.js";
-import { clockOf, type LotView, type Penlight } from "./client.js";
+import { CATALOGUE, STATUS } from "./constants";
+import { describe, holds, render, type Item } from "./facts";
+import { commitment, priceAt, valueMicros } from "./math";
+import { clockOf, type LotView, type Penlight } from "./client";
 
 export interface Check {
   name: string;

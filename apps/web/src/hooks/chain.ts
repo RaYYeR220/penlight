@@ -214,3 +214,23 @@ export function usePlayer() {
 }
 
 export { CATALOGUE };
+
+/**
+ * Checks the private rollup's TDX attestation from the browser before trusting
+ * it with a player's session. "unknown" until the check finishes.
+ */
+export function useEnclave() {
+  const [state, setState] = useState<"unknown" | "attested" | "failed">("unknown");
+  useEffect(() => {
+    let alive = true;
+    import("@magicblock-labs/ephemeral-rollups-sdk")
+      .then(({ verifyTeeRpcIntegrity }) => verifyTeeRpcIntegrity(NETWORK_TEE))
+      .then(() => alive && setState("attested"))
+      .catch(() => alive && setState("failed"));
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return state;
+}
+const NETWORK_TEE = "https://devnet-tee.magicblock.app";

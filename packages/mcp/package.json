@@ -1,0 +1,22 @@
+{
+  "name": "@penlight/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for Penlight: read lots, appraise them from their facts, take, fund and verify",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "bin": { "penlight-mcp": "src/index.ts" },
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "smoke": "tsx test/smoke.ts",
+    "typecheck": "tsc -p . --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@penlight/cli": "0.1.0",
+    "@solana/web3.js": "1.98.4",
+    "tsx": "^4.20.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": { "typescript": "^5.9.0", "@types/node": "^22.0.0" }
+}

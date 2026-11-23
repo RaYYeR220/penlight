@@ -57,7 +57,7 @@ export interface Settings {
 export function settingsFromEnv(env: NodeJS.ProcessEnv = process.env): Settings {
   const teeRpc = env.PENLIGHT_TEE_RPC ?? NETWORK.teeRpc;
   return {
-    houseUrl: (env.PENLIGHT_HOUSE_URL ?? "http://35.187.34.216:8787").replace(/\/+$/, ""),
+    houseUrl: (env.PENLIGHT_HOUSE_URL ?? "https://penlight-app.vercel.app/api/house").replace(/\/+$/, ""),
     baseRpc: env.PENLIGHT_BASE_RPC ?? NETWORK.baseRpc,
     teeRpc,
     teeWs: env.PENLIGHT_TEE_WS ?? (env.PENLIGHT_TEE_RPC ? teeRpc.replace(/^http/, "ws") : NETWORK.teeWs),

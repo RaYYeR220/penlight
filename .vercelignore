@@ -1,0 +1,9 @@
+keys
+target
+spike
+.house-data
+node_modules
+**/node_modules
+**/.next
+.vercel/output
+*.so

@@ -29,7 +29,7 @@ Install once from the repository root (`npm install`), then add the server to yo
       "command": "npx",
       "args": ["tsx", "/absolute/path/to/penlight/packages/mcp/src/index.ts"],
       "env": {
-        "PENLIGHT_HOUSE_URL": "http://35.187.34.216:8787",
+        "PENLIGHT_HOUSE_URL": "https://penlight-app.vercel.app/api/house",
         "PENLIGHT_KEYPAIR": "/absolute/path/to/agent.json"
       }
     }
@@ -42,7 +42,7 @@ Both `env` entries are optional:
 | Variable | Default |
 | --- | --- |
 | `PENLIGHT_KEYPAIR` | `~/.penlight/agent.json`, created on first use if it doesn't exist |
-| `PENLIGHT_HOUSE_URL` | `http://35.187.34.216:8787`, the House API that runs the faucet |
+| `PENLIGHT_HOUSE_URL` | `https://penlight-app.vercel.app/api/house`, the House API that runs the faucet |
 | `PENLIGHT_BASE_RPC` / `PENLIGHT_TEE_RPC` | Solana devnet and the MagicBlock private rollup |
 
 A fresh agent has no funds. Its first `take_lot` reports where its new keypair was written and asks it to call `fund_agent` first. Balances in the rollup are private, so `my_holdings` reads them through a session signed with the agent's own key.

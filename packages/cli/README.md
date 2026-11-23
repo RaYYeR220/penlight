@@ -65,7 +65,7 @@ The suggested price is 90% of the median (or the 10th percentile, when the sprea
 
 | Variable | Default |
 | --- | --- |
-| `PENLIGHT_HOUSE_URL` | `http://35.187.34.216:8787`, the House API that runs the faucet |
+| `PENLIGHT_HOUSE_URL` | `https://penlight-app.vercel.app/api/house`, the House API that runs the faucet |
 | `PENLIGHT_BASE_RPC` | Solana devnet RPC |
 | `PENLIGHT_TEE_RPC` | MagicBlock private rollup RPC |
 | `PENLIGHT_DEPLOYMENT` | the devnet deployment bundled with `@penlight/sdk` |

@@ -112,6 +112,7 @@ async function consign(p: Pending, set: (f: (r: Run) => Run) => void) {
         if (err.status === 403) throw new Error("The House relays lots only for players who used the faucet. Get test USDC first.");
         if (err.status === 429) throw new Error("The House has relayed its limit of lots for the hour. Your seal is kept; try again later.");
         if ((err.status ?? 0) >= 500) throw new Error(`The House couldn't relay the lot (it answered ${err.status}). Your seal is kept; try again shortly.`);
+        if (err.status === 400) throw new Error(`The House refused to relay the lot (${err.message}). Your seal is kept; try again later.`);
         throw err;
       }
     }
@@ -148,6 +149,8 @@ async function consign(p: Pending, set: (f: (r: Run) => Run) => void) {
     }
     await sleep(500);
   }
+  // Without this the step would spin forever; the lot room shows the clock whenever it opens.
+  throw new Error("The clock hasn't opened after two minutes. Your tokens are packed; the lot room shows it as soon as it opens.");
 }
 
 const STEPS = [

@@ -252,7 +252,7 @@ function FactsSay({ lot, prices }: { lot: LotView; prices: bigint[] | null }) {
             <b>
               <Num>{usd(a.r.p50)}</Num>
             </b>
-            {stale ? <Spinner /> : null}
+            {stale ? <> <Spinner /></> : null}
           </p>
           <RangeBar lo={a.r.p10} mid={a.r.p50} hi={a.r.p90} clock={clock} frozen={frozen} />
           <p className="small mute">
@@ -457,7 +457,14 @@ function TakenPanel({ lot, take }: { lot: LotView; take: Take }) {
         <span className="small mute">block {int(block)}</span>
       </div>
       <p className="taken-line">
-        <WhoLabel who={who(lot.winner.toBase58())} /> paid{" "}
+        {mine ? (
+          <span className="who who-you">
+            <span>You</span>
+          </span>
+        ) : (
+          <WhoLabel who={who(lot.winner.toBase58())} />
+        )}{" "}
+        paid{" "}
         <b>
           <Num>{usd(lot.paid)}</Num>
         </b>

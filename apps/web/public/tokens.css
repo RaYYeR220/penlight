@@ -1,0 +1,100 @@
+/* Penlight design tokens.
+   Three themes on one contract: set data-theme="light" | "dark" | "colour" on <html>.
+   Fonts: Switzer (Fontshare CSS API) for display and body, Geist Mono (Google Fonts) for real data only.
+     <link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600&display=swap" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+   Contrast (WCAG, measured against --ground): ink ≥10.6:1, muted ≥6.3:1, faint ≥4.7:1 in every theme;
+   --on-accent on --accent ≥6.1:1. Token dot colours ≥2.7:1 (light), ≥7:1 (dark), ≥5.3:1 (colour). */
+
+:root{
+  /* ---- type ---- */
+  --sans:'Switzer', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono:'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --fs-display:clamp(46px, 5.3vw, 80px);   /* hero h1, w500, -0.045em */
+  --fs-h2:clamp(34px, 3.9vw, 56px);        /* section titles, w500, -0.035em */
+  --fs-figure:clamp(54px, 6.6vw, 100px);   /* big numbers, w500, -0.045em */
+  --fs-h3:21px;
+  --fs-lead:18px;
+  --fs-body:16px;
+  --fs-small:14.5px;
+  --fs-meta:13px;
+  --fs-micro:12px;
+  --lh-tight:.98;
+  --lh-body:1.55;
+  --track-display:-.045em;
+  --track-h2:-.035em;
+  --track-body:-.005em;
+
+  /* ---- spacing (4px base) ---- */
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:20px; --s-6:24px; --s-7:32px;
+  --s-8:40px; --s-9:56px; --s-10:72px; --s-11:96px; --s-12:136px;
+  --container:1320px;
+  --gutter:32px;
+  --section-y:clamp(88px, 11vw, 148px);
+
+  /* ---- radii: wide named scale ---- */
+  --r-xs:6px; --r-sm:7px; --r-md:10px; --r-lg:12px; --r-xl:14px; --r-2xl:16px; --r-box:18px; --r-3xl:20px;
+  --r-tile:22px; --r-card:24px; --r-panel:28px; --r-section:32px; --r-hero:40px; --r-full:999px;
+
+  /* ---- hairlines + motion ---- */
+  --hair-w:1px;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-io:cubic-bezier(.65,0,.35,1);
+  --t-fast:.18s; --t-mid:.4s; --t-slow:.8s;
+}
+@media (max-width:560px){ :root{ --gutter:16px; } }
+
+/* ---------------- LIGHT (default) ---------------- */
+:root, :root[data-theme="light"]{
+  color-scheme:light;
+  --ground:#eef0ea; --surface:#e6e9e1; --card:#f9faf6; --card-2:#f2f4ee;
+  --ink:#121512; --ink-2:#2a2e29; --muted:#525850; --faint:#656b62;
+  --hair:rgba(18,21,18,.09); --hair-2:rgba(18,21,18,.16); --hair-3:rgba(18,21,18,.30);
+  --accent:#5b3ff0; --accent-deep:#4429c9; --on-accent:#ffffff; --accent-soft:rgba(91,63,240,.10);
+  --pos:#5b3ff0; --neg:#b4412c;
+  --focus:#5b3ff0;
+  --nav-bg:rgba(238,240,234,.82);
+  --term-bg:#141713; --term-ink:#e9ece4; --term-muted:#8b9187; --term-ok:#9fdc7c; --term-hair:rgba(233,236,228,.10);
+  --pool-1:rgba(250,251,247,.95); --pool-2:rgba(214,219,206,.55);
+  --grain-opacity:.05; --grain-blend:multiply;
+  --dot-alpha:.92; --residue-alpha:.085;
+  /* token dots: the vault's largest token */
+  --tok-sol:#6d5cf0; --tok-bonk:#c47c02; --tok-wif:#a26f3e; --tok-jup:#169a70;
+  --tok-jto:#2f78e6; --tok-pyth:#a752cc; --tok-ray:#13819d; --tok-popcat:#e0533f;
+}
+
+/* ---------------- DARK ---------------- */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#0c0d0b; --surface:#121411; --card:#161814; --card-2:#1b1e19;
+  --ink:#eceee7; --ink-2:#d3d6ce; --muted:#a2a79c; --faint:#80857a;
+  --hair:rgba(236,238,231,.08); --hair-2:rgba(236,238,231,.15); --hair-3:rgba(236,238,231,.28);
+  --accent:#c8f06a; --accent-deep:#a9d34a; --on-accent:#0c0d0b; --accent-soft:rgba(200,240,106,.10);
+  --pos:#c8f06a; --neg:#ff8a73;
+  --focus:#c8f06a;
+  --nav-bg:rgba(12,13,11,.78);
+  --term-bg:#121411; --term-ink:#eceee7; --term-muted:#80857a; --term-ok:#c8f06a; --term-hair:rgba(236,238,231,.08);
+  --pool-1:rgba(236,238,231,.045); --pool-2:rgba(200,240,106,.035);
+  --grain-opacity:.06; --grain-blend:screen;
+  --dot-alpha:.92; --residue-alpha:.085;
+  --tok-sol:#9a8cff; --tok-bonk:#ffb547; --tok-wif:#d8a878; --tok-jup:#3fd3a0;
+  --tok-jto:#5fa2ff; --tok-pyth:#d98cf5; --tok-ray:#45d2ec; --tok-popcat:#ff7c66;
+}
+
+/* ---------------- COLOUR FIELD: deep ultramarine ---------------- */
+:root[data-theme="colour"]{
+  color-scheme:dark;
+  --ground:#1d2b8c; --surface:#22329a; --card:#16226f; --card-2:#1a2878;
+  --ink:#f5f3ec; --ink-2:#e2e2ea; --muted:#c3c8ee; --faint:#a3aae0;
+  --hair:rgba(245,243,236,.14); --hair-2:rgba(245,243,236,.24); --hair-3:rgba(245,243,236,.40);
+  --accent:#ffd36b; --accent-deep:#f0bd45; --on-accent:#161c48; --accent-soft:rgba(255,211,107,.12);
+  --pos:#ffd36b; --neg:#ffa894;
+  --focus:#ffd36b;
+  --nav-bg:rgba(29,43,140,.80);
+  --term-bg:#131d63; --term-ink:#f5f3ec; --term-muted:#a3aae0; --term-ok:#8ff0b8; --term-hair:rgba(245,243,236,.12);
+  --pool-1:rgba(92,112,226,.42); --pool-2:rgba(12,18,80,.45);
+  --grain-opacity:.07; --grain-blend:overlay;
+  --dot-alpha:.95; --residue-alpha:.11;
+  --tok-sol:#c4b8ff; --tok-bonk:#ffc35a; --tok-wif:#e6c29a; --tok-jup:#6fe8b4;
+  --tok-jto:#8fd0ff; --tok-pyth:#f3a3ff; --tok-ray:#5fe6e6; --tok-popcat:#ff8f7a;
+}

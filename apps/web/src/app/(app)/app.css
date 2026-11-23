@@ -1005,10 +1005,6 @@ a.feed-text:hover {
 }
 .say-line {
   font-size: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0 6px;
 }
 .range {
   margin: var(--s-7) 0 var(--s-3);

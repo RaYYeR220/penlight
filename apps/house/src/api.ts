@@ -139,7 +139,7 @@ const DISC = (name: string) => Buffer.from((pl.program.idl.instructions.find((i)
 const relayTimes = new Map<string, number[]>();
 let relayGlobal: number[] = [];
 const RELAY_PER_CLIENT_HOUR = 20;
-const RELAY_GLOBAL_HOUR = 120;
+const RELAY_GLOBAL_HOUR = 40;
 
 app.post("/api/relay", async (c) => {
   const body = await c.req.json().catch(() => ({}));
@@ -149,10 +149,9 @@ app.post("/api/relay", async (c) => {
   const mine = (relayTimes.get(ip) ?? []).filter((t) => t > hourAgo);
   relayGlobal = relayGlobal.filter((t) => t > hourAgo);
   if (mine.length >= RELAY_PER_CLIENT_HOUR || relayGlobal.length >= RELAY_GLOBAL_HOUR) return c.json({ error: "relay limit reached" }, 429);
-  // Every attempt counts, successful or not.
+  // Every attempt counts against the caller; only valid ones against the global budget.
   mine.push(Date.now());
   relayTimes.set(ip, mine);
-  relayGlobal.push(Date.now());
   let tx: Transaction;
   try {
     tx = Transaction.from(Buffer.from(String(body.tx), "base64"));
@@ -171,6 +170,9 @@ app.post("/api/relay", async (c) => {
   // create_lot: payer = House, seller = a different signer. delegate_lot: payer = House, same lot.
   if (!ci.keys[0].pubkey.equals(house.publicKey) || ci.keys[1].pubkey.equals(house.publicKey)) return c.json({ error: "bad create_lot accounts" }, 400);
   if (!di.keys[0].pubkey.equals(house.publicKey) || !di.keys[2].pubkey.equals(ci.keys[3].pubkey)) return c.json({ error: "bad delegate_lot accounts" }, 400);
+  // Only players who came in through the faucet can have the House pay for a lot.
+  if (!store.faucetGiven[ci.keys[1].pubkey.toBase58()]) return c.json({ error: "get test USDC from the faucet first" }, 403);
+  relayGlobal.push(Date.now());
   try {
     tx.partialSign(house);
     if (!tx.verifySignatures()) return c.json({ error: "missing signatures" }, 400);

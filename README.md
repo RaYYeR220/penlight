@@ -6,7 +6,7 @@ A lot is a sealed vault of tokens. Its price falls every 10 ms rollup block. As 
 
 Packs sell you odds. Penlight sells you the box: sealed on Solana before the clock starts, hinted by randomness nobody controls, priced by you.
 
-**Live:** https://penlight-app.vercel.app · **Verify any lot:** https://penlight-app.vercel.app/verify
+**Live:** https://penlight-app.vercel.app · **Verify any lot:** https://penlight-app.vercel.app/verify · **Review in 5 minutes:** [JUDGES.md](JUDGES.md) · [PROOF.md](PROOF.md) · [CLAIMS.md](CLAIMS.md)
 
 Built on Solana and MagicBlock: **Private Ephemeral Rollups** (Intel TDX), **VRF inside the rollup**, the **pricing oracle**, and **Ephemeral SPL Token** custody.
 

@@ -77,9 +77,18 @@ async function consign(p: Pending, set: (f: (r: Run) => Run) => void) {
   if (!pend.createSig) {
     update(2);
     for (let attempt = 0; ; attempt++) {
+      // The lot takes the House's next number when it lands. A lot opened since this was sealed
+      // (or since a kept seal was saved) has that number now, so seal again for the current one.
+      const next = (await pl.houseState()).lotsCreated;
+      const moved = next !== pend.id;
+      pend.id = next;
       const lot = pl.lotAddress(pend.id);
       const c = commitment(lot, salt, pl.mints, amounts);
       pend.commitment = hex(c);
+      if (moved) {
+        savePending(pend);
+        update(2);
+      }
       const tx = new Transaction().add(
         await pl.createLotIx({
           payer: houseAuthority,
@@ -102,13 +111,14 @@ async function consign(p: Pending, set: (f: (r: Run) => Run) => void) {
         break;
       } catch (e) {
         const err = e as Error & { status?: number };
-        // Someone else's lot took this number in the meantime: seal again for the next one.
-        if (attempt < 3 && /seed|0x7d6|already in use|custom program error: 0x0\b/i.test(err.message)) {
-          pend.id = (await pl.houseState()).lotsCreated;
-          savePending(pend);
-          update(2);
-          continue;
-        }
+        // Someone else's lot took this number in the meantime: seal again for the next one (top of the loop).
+        // The House trims its error text, so the lot count is the check that doesn't depend on wording.
+        const numberMoved = async () => {
+          const h = await pl.houseState().catch(() => null);
+          return h !== null && h.lotsCreated !== pend.id;
+        };
+        const taken = /seed|0x7d6|already in use|custom program error: 0x0\b/i.test(err.message) || ((err.status ?? 0) >= 500 && (await numberMoved()));
+        if (attempt < 3 && taken) continue;
         if (err.status === 403) throw new Error("The House relays lots only for players who used the faucet. Get test USDC first.");
         if (err.status === 429) throw new Error("The House has relayed its limit of lots for the hour. Your seal is kept; try again later.");
         if ((err.status ?? 0) >= 500) throw new Error(`The House couldn't relay the lot (it answered ${err.status}). Your seal is kept; try again shortly.`);

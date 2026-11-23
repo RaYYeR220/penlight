@@ -1005,6 +1005,7 @@ a.feed-text:hover {
 }
 .say-line {
   font-size: 16px;
+  margin-bottom: var(--s-2);
 }
 .range {
   margin: var(--s-7) 0 var(--s-3);

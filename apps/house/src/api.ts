@@ -196,7 +196,10 @@ app.post("/api/relay", async (c) => {
     store.event({ kind: "consigned", text: "A player consigned a lot of their own", sig: signature });
     return c.json({ signature });
   } catch (e) {
-    return c.json({ error: (e as Error).message.slice(0, 200) }, 502);
+    // Surface the program's error code (e.g. a lot number that was taken meanwhile), not a truncated log.
+    const m = (e as Error).message;
+    const code = m.match(/Error Code: (\w+)/)?.[1] ?? m.match(/custom program error: (0x[0-9a-f]+)/i)?.[1] ?? m.match(/already in use/)?.[0];
+    return c.json({ error: code ? `relay failed: ${code}` : m.slice(-200), code: code ?? null }, 502);
   }
 });
 

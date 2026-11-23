@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PublicKey } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { CATALOGUE, decodeLot, sendAndConfirm, type LotView } from "@penlight/sdk";
+import { CATALOGUE, STATUS, decodeLot, sendAndConfirm, type LotView } from "@penlight/sdk";
 import { penlight, playerKey, rollupAsPlayer, rollupPublic } from "@/lib/chain";
 import { house, type ApiLot, type FeedEvent } from "@/lib/house";
 
@@ -64,9 +64,33 @@ export function useRollupSlot(everyMs = 50): bigint {
   return slot;
 }
 
+// How far along its life a lot is. The status codes aren't in lifecycle order (OPENED is 7,
+// DELIVERED 5), so rank them; a sale and a run-out sit at the same depth.
+const RANK: Record<number, number> = {
+  [STATUS.CREATED]: 0,
+  [STATUS.SHUFFLING]: 1,
+  [STATUS.SHUFFLED]: 2,
+  [STATUS.LIVE]: 3,
+  [STATUS.SOLD]: 4,
+  [STATUS.UNSOLD]: 4,
+  [STATUS.OPENED]: 5,
+  [STATUS.DELIVERED]: 6,
+  [STATUS.EXPIRED]: 6,
+};
+/** True when `a` is an earlier state of the same lot than `b`. */
+function behind(a: LotView, b: LotView): boolean {
+  const ka = [RANK[a.status] ?? 0, a.hintsRevealed, Number(a.sealed) + Number(a.packed)];
+  const kb = [RANK[b.status] ?? 0, b.hintsRevealed, Number(b.sealed) + Number(b.packed)];
+  for (let i = 0; i < ka.length; i++) if (ka[i] !== kb[i]) return ka[i] < kb[i];
+  return false;
+}
+
 /** One lot, live from the rollup (falls back to Solana once it has settled). */
 export function useLot(id: number | null) {
-  const [lot, setLot] = useState<LotView | null>(null);
+  const [lot, setLotRaw] = useState<LotView | null>(null);
+  // The poll and the subscription can answer out of order; a lot only moves forward, so a
+  // stale read never replaces a newer one (it would hide a fact that is already out).
+  const setLot = useCallback((next: LotView) => setLotRaw((prev) => (prev && prev.id === next.id && behind(next, prev) ? prev : next)), []);
   const [missing, setMissing] = useState(false);
   const [source, setSource] = useState<"rollup" | "solana" | null>(null);
   const settledRef = useRef(false);
@@ -106,7 +130,7 @@ export function useLot(id: number | null) {
       clearInterval(poll);
       void rollupPublic().removeAccountChangeListener(sub);
     };
-  }, [id]);
+  }, [id, setLot]);
   return { lot, missing, source };
 }
 

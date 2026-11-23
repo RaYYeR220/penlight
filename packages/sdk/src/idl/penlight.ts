@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/penlight.json`.
  */
 export type Penlight = {
-  "address": "B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt",
+  "address": "2gqehWewPNJg9t6XtnniyNk8iuC5p6ew1q4XrNHLopkt",
   "metadata": {
     "name": "penlight",
     "version": "0.1.0",
@@ -260,38 +260,38 @@ export type Penlight = {
             "program": {
               "kind": "const",
               "value": [
-                150,
-                6,
-                197,
-                29,
-                140,
-                242,
-                153,
-                27,
-                74,
-                13,
-                110,
-                30,
-                173,
-                54,
-                109,
-                28,
-                102,
-                208,
-                28,
+                25,
                 16,
-                150,
-                153,
-                48,
-                102,
-                79,
-                14,
+                88,
+                224,
+                215,
+                191,
+                192,
+                64,
                 31,
-                102,
-                153,
-                189,
-                229,
-                155
+                69,
+                203,
+                188,
+                238,
+                32,
+                117,
+                243,
+                144,
+                69,
+                157,
+                249,
+                197,
+                236,
+                98,
+                149,
+                41,
+                99,
+                62,
+                210,
+                233,
+                96,
+                170,
+                173
               ]
             }
           }
@@ -415,38 +415,38 @@ export type Penlight = {
             "program": {
               "kind": "const",
               "value": [
-                150,
-                6,
-                197,
-                29,
-                140,
-                242,
-                153,
-                27,
-                74,
-                13,
-                110,
-                30,
-                173,
-                54,
-                109,
-                28,
-                102,
-                208,
-                28,
+                25,
                 16,
-                150,
-                153,
-                48,
-                102,
-                79,
-                14,
+                88,
+                224,
+                215,
+                191,
+                192,
+                64,
                 31,
-                102,
-                153,
-                189,
-                229,
-                155
+                69,
+                203,
+                188,
+                238,
+                32,
+                117,
+                243,
+                144,
+                69,
+                157,
+                249,
+                197,
+                236,
+                98,
+                149,
+                41,
+                99,
+                62,
+                210,
+                233,
+                96,
+                170,
+                173
               ]
             }
           }
@@ -544,12 +544,11 @@ export type Penlight = {
           }
         },
         {
-          "name": "validator",
-          "optional": true
+          "name": "validator"
         },
         {
           "name": "ownerProgram",
-          "address": "B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt"
+          "address": "2gqehWewPNJg9t6XtnniyNk8iuC5p6ew1q4XrNHLopkt"
         },
         {
           "name": "delegationProgram",
@@ -618,38 +617,38 @@ export type Penlight = {
             "program": {
               "kind": "const",
               "value": [
-                150,
-                6,
-                197,
-                29,
-                140,
-                242,
-                153,
-                27,
-                74,
-                13,
-                110,
-                30,
-                173,
-                54,
-                109,
-                28,
-                102,
-                208,
-                28,
+                25,
                 16,
-                150,
-                153,
-                48,
-                102,
-                79,
-                14,
+                88,
+                224,
+                215,
+                191,
+                192,
+                64,
                 31,
-                102,
-                153,
-                189,
-                229,
-                155
+                69,
+                203,
+                188,
+                238,
+                32,
+                117,
+                243,
+                144,
+                69,
+                157,
+                249,
+                197,
+                236,
+                98,
+                149,
+                41,
+                99,
+                62,
+                210,
+                233,
+                96,
+                170,
+                173
               ]
             }
           }
@@ -747,12 +746,11 @@ export type Penlight = {
           }
         },
         {
-          "name": "validator",
-          "optional": true
+          "name": "validator"
         },
         {
           "name": "ownerProgram",
-          "address": "B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt"
+          "address": "2gqehWewPNJg9t6XtnniyNk8iuC5p6ew1q4XrNHLopkt"
         },
         {
           "name": "delegationProgram",
@@ -940,6 +938,10 @@ export type Penlight = {
           "type": "pubkey"
         },
         {
+          "name": "validator",
+          "type": "pubkey"
+        },
+        {
           "name": "catalogue",
           "type": {
             "array": [
@@ -974,7 +976,7 @@ export type Penlight = {
         {
           "name": "vrfProgramIdentity",
           "signer": true,
-          "address": "7DzFpuj9XXi2Bt18vAdh1ZcRKPFeiyEBheLdCoNZmyCi"
+          "address": "G5GPfhv6ydp5MD53124hHNTJyd7s4zywTPn6McLsEr8"
         },
         {
           "name": "lot",
@@ -1659,6 +1661,10 @@ export type Penlight = {
     },
     {
       "name": "setCatalogue",
+      "docs": [
+        "Only before the first lot: every lot reads the catalogue, so it never",
+        "changes under a lot."
+      ],
       "discriminator": [
         20,
         181,
@@ -1996,6 +2002,21 @@ export type Penlight = {
       "code": 6016,
       "name": "poolTooSmall",
       "msg": "the pool cannot cover a draw"
+    },
+    {
+      "code": 6017,
+      "name": "notSealed",
+      "msg": "the private permission must exist before this"
+    },
+    {
+      "code": 6018,
+      "name": "wrongValidator",
+      "msg": "lots may only be delegated to the House's private-rollup validator"
+    },
+    {
+      "code": 6019,
+      "name": "catalogueFrozen",
+      "msg": "the catalogue is fixed once lots exist"
     }
   ],
   "types": [
@@ -2104,6 +2125,13 @@ export type Penlight = {
             "type": "u64"
           },
           {
+            "name": "validator",
+            "docs": [
+              "The private-rollup (TEE) validator lots and the pool may be delegated to."
+            ],
+            "type": "pubkey"
+          },
+          {
             "name": "bump",
             "type": "u8"
           },
@@ -2142,6 +2170,13 @@ export type Penlight = {
           {
             "name": "status",
             "type": "u8"
+          },
+          {
+            "name": "sealed",
+            "docs": [
+              "Set once the seal's permission exists; nothing touches the seal before."
+            ],
+            "type": "bool"
           },
           {
             "name": "packed",
@@ -2301,6 +2336,13 @@ export type Penlight = {
                 8
               ]
             }
+          },
+          {
+            "name": "private",
+            "docs": [
+              "Set once the ledger's no-reader permission exists."
+            ],
+            "type": "bool"
           },
           {
             "name": "bump",

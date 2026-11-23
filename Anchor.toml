@@ -6,10 +6,10 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-penlight = "B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt"
+penlight = "2gqehWewPNJg9t6XtnniyNk8iuC5p6ew1q4XrNHLopkt"
 
 [programs.localnet]
-penlight = "B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt"
+penlight = "2gqehWewPNJg9t6XtnniyNk8iuC5p6ew1q4XrNHLopkt"
 
 [provider]
 cluster = "devnet"

@@ -53,6 +53,8 @@ const ERROR_CODES: Record<string, number[]> = {
   // duplicate-mutable-account rule (2040) can refuse it before our own check.
   SellerCannotTake: [6006, 2040],
   TooEarly: [6010],
+  NotSealed: [6017],
+  WrongValidator: [6018],
 };
 
 async function expectError(name: string, code: string, fn: () => Promise<unknown>) {
@@ -62,7 +64,9 @@ async function expectError(name: string, code: string, fn: () => Promise<unknown
     step(`NEGATIVE ${name}`, { ok: false, expected: code, got: "success" });
   } catch (e) {
     const text = e instanceof TxError ? `${e.message}\n${(e.logs ?? []).join("\n")}` : String(e);
-    const ok = text.includes(code) || ERROR_CODES[code].some((n) => text.includes(`"Custom":${n}`));
+    const ok =
+      text.includes(code) ||
+      ERROR_CODES[code].some((n) => text.includes(`"Custom":${n}`) || text.includes(`custom program error: 0x${n.toString(16)}`));
     if (!ok) failures++;
     step(`NEGATIVE ${name}`, { ok, expected: code, error: (e as Error).message?.slice(0, 120), signature: e instanceof TxError ? e.signature : undefined });
   }
@@ -120,6 +124,17 @@ async function runLot(opts: {
     );
     const sig = await sendAndConfirmTransaction(base, tx, [house, opts.seller]);
     step(`${label}: create_lot + delegate (base)`, { sig, commitment: Buffer.from(c).toString("hex") });
+  } else if (opts.negatives) {
+    const create = new Transaction().add(
+      await pl.createHouseLotIx({ authority: house.publicKey, id, startPrice: 60_000_000n, floorPrice: 6_000_000n, durationSlots: opts.durationSlots }),
+    );
+    step(`${label}: create_house_lot (base)`, { sig: await sendAndConfirmTransaction(base, create, [house]) });
+    // A public (non-enclave) validator would expose the seal: refused.
+    const publicEr = new PublicKey("MAS1Dt9qreoRMQ14YQuhg8UTZMMzDdKhmkZMECCzk57");
+    await expectError(`${label}: delegate to a validator outside the enclave`, "WrongValidator", async () =>
+      sendAndConfirmTransaction(base, new Transaction().add(await pl.delegateLotIx(house.publicKey, id, publicEr)), [house]),
+    );
+    step(`${label}: delegate (base)`, { sig: await sendAndConfirmTransaction(base, new Transaction().add(await pl.delegateLotIx(house.publicKey, id)), [house]) });
   } else {
     const tx = new Transaction().add(
       await pl.createHouseLotIx({ authority: house.publicKey, id, startPrice: 60_000_000n, floorPrice: 6_000_000n, durationSlots: opts.durationSlots }),
@@ -131,6 +146,11 @@ async function runLot(opts: {
   await waitFor("lot in rollup", async () => (await pl.fetchLot(houseEr, lot)) !== null, 30_000, 300);
 
   // ── rollup: seal permission ──
+  if (opts.negatives && !opts.consign) {
+    await expectError(`${label}: draw the seed before the seal is private`, "NotSealed", async () =>
+      sendAndConfirm(houseEr, [await pl.openIx(house.publicKey, lot)], [house], { label: "open" }),
+    );
+  }
   const perm = await sendAndConfirm(houseEr, [await pl.sealPermissionIx(house.publicKey, lot)], [house], { label: "seal_permission" });
   step(`${label}: seal_permission`, { sig: perm.signature, ms: perm.ms });
 

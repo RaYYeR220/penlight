@@ -122,8 +122,11 @@ async function main() {
   for (const [mint, amount] of deposits) {
     const [eata] = deriveEphemeralAta(house.publicKey, mint);
     const eataInfo = await base.getAccountInfo(eata);
-    if (eataInfo && eataInfo.owner.equals(new PublicKey("DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"))) continue;
-    const ixs = await delegateSpl(house.publicKey, mint, amount, {
+    const delegated = !!eataInfo && eataInfo.owner.equals(new PublicKey("DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"));
+    const have = delegated ? await erBal(house.publicKey, mint) : 0n;
+    const poolHas = await erBal(pool, mint);
+    if (poolHas > 0n || have >= amount) continue;
+    const ixs = await delegateSpl(house.publicKey, mint, amount - have, {
       validator: NETWORK.teeValidator,
       payer: house.publicKey,
       initIfMissing: true,
@@ -131,7 +134,7 @@ async function main() {
       initAtasIfMissing: true,
     });
     const sig = await sendAndConfirmTransaction(base, new Transaction().add(...ixs), [house]);
-    log("deposited into rollup", mint.toBase58().slice(0, 6), amount.toString(), sig.slice(0, 16));
+    log("deposited into rollup", mint.toBase58().slice(0, 6), (amount - have).toString(), sig.slice(0, 16));
   }
   await sleep(3000);
 

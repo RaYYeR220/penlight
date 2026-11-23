@@ -194,7 +194,7 @@ export class Penlight {
       symbol: Array.from(Buffer.from(c.symbol.padEnd(8, "\0").slice(0, 8))),
     }));
     return this.program.methods
-      .initHouse(usdcMint, catalogue)
+      .initHouse(usdcMint, NETWORK.teeValidator, catalogue)
       .accountsPartial({ authority, house: Penlight.houseAddress(authority, this.programId), systemProgram: SystemProgram.programId })
       .instruction();
   }

@@ -1,51 +1,68 @@
 {
   "network": "devnet",
-  "program": "B6e9EvhoJSRgofxYLVaW4hTvCLQYxxLjbhNV5YLucfDt",
-  "startedAt": "2026-11-23T14:27:03.869Z",
+  "program": "2gqehWewPNJg9t6XtnniyNk8iuC5p6ew1q4XrNHLopkt",
+  "startedAt": "2026-11-23T14:33:24.257Z",
   "steps": [
     {
       "name": "A house lot: lot address",
-      "id": 9,
-      "lot": "CZrA9FX5FCP4K4fmtfx9HCHXLWeAhkJJdKFox9A12pAi"
+      "id": 1,
+      "lot": "BVxnTgL7eGnQHQec1PUjEozwf8BedDAvHPMPwdQMtbqw"
     },
     {
-      "name": "A house lot: create_house_lot + delegate (base)",
-      "sig": "3ETDLpMVps6vZm2MWRhUYAQimrm4VTkVchj9r1fqnme7qhJDpj9h7WtXFbHKntsXogquToXLYSZG9Qq1nJj1VQZh"
+      "name": "A house lot: create_house_lot (base)",
+      "sig": "45f4rpfJZ3Ka3xXTN6Mvjd6cXuPzoSwwZAGym4tBzRztaywRXry8ZECEVZpeEsyd9JWQQn8rrrTif3vWLCnFNtLE"
+    },
+    {
+      "name": "NEGATIVE A house lot: delegate to a validator outside the enclave",
+      "ok": true,
+      "expected": "WrongValidator",
+      "error": "Simulation failed. \nMessage: Transaction simulation failed. \nLogs: \n[\n  \"Program 2gqehWewPNJg9t6XtnniyNk8iuC5p6ew1q4XrNH"
+    },
+    {
+      "name": "A house lot: delegate (base)",
+      "sig": "3nF39brGtrQEobxrVkTmg3mgQPRbNqeyMfJ555u4nSnfyCfQCxxG2B3JPsCRVcsiVKAuv4pvVmu655Yhufcgw5nC"
+    },
+    {
+      "name": "NEGATIVE A house lot: draw the seed before the seal is private",
+      "ok": true,
+      "expected": "NotSealed",
+      "error": "open failed: {\"InstructionError\":[0,{\"Custom\":6017}]}",
+      "signature": "4sErwSdZtYuuMDBg6DL4KYNcy3jhV31xW1s3MMjDVWefC4Ycyz6XqE6q9fY6cxAskeoyoygkw4iWWm3n7HwHpqEw"
     },
     {
       "name": "A house lot: seal_permission",
-      "sig": "2N7fhKSwJaidNuVgkD47stMowciZ9kFcLd3Q3aGvgyW4q8RnDp7FjwZGURcEYojvsLts5f62hhzqUZZweP6G57io",
-      "ms": 524
+      "sig": "saK5UWyehtU8ffktg3TV9nAtC8y5BMEw7sGdQ8qSAGKLvUhicJ6a89BWcRPg4XyFZe1fpviWEn95fL9tVQrnTsS",
+      "ms": 533
     },
     {
       "name": "A house lot: VRF requested in the rollup, callback landed",
-      "sig": "4VmTwqyyLqfmar2ggxmVimbw6daYwgNdhxVqmfg5zA5Mc7NtCBfG13eL1griPZGLAyGBqQf6ECbVvHVSifpjNc4g",
-      "callbackMs": 227
+      "sig": "3cN1fMXpF1XWM7Ha7HVQBLVWyd92ezrW7GNoq1RDUScby8F3pwSqj45u8osdRXC49pphkwJMx9zmCWoKVXPV2667",
+      "callbackMs": 221
     },
     {
       "name": "A house lot: pack_from_pool (contents drawn by the seed)",
-      "sig": "5ecGRyp64pFJAkyEBaYwmqPfdVmVvKgvCUCUHrwdBiAPerNDY5QXAn8sn2hGeGPU8MKwmhxCPbW6aaG1P9yGSt5S",
-      "ms": 461
+      "sig": "4E42AjfriJ9cpDDxTbJd3423cdvL1Ny1RtochCodr8zzD433poKRyzdEA3Ff5xBJ2zASsV3jGrKteMdFnYdgyyvo",
+      "ms": 469
     },
     {
       "name": "A house lot: go_live (seal committed to Solana)",
-      "sig": "5xfEFqT4A5SVJddvqv11A5u3hvgFzKGp1Wuze2RCBt6wvuGf4jFRCVxB7iDe5my81uyX5AgJ1gXJUbF4ME4NkTho",
-      "openSlot": "868667002",
-      "commitment": "004bda8000ffc2cf7b0042b7b4070a69720e34ed23fd45aaf5627f21c2255595"
+      "sig": "33bNNM5Uv3Qb9c3ySka4hVQCBpQuxcQA1M9x5TJq8ViFz9dmVkJ7ZpDdLeiWs8Qxwb5URTVbnFCpK2zntFsy7WFQ",
+      "openSlot": "868705284",
+      "commitment": "bdb6dbfb554c7d4d49cac9d462d98426fa059c96d25d63caae01023075120460"
     },
     {
       "name": "NEGATIVE A house lot: take before the clock opens",
       "ok": true,
       "expected": "TooEarly",
       "error": "take failed: {\"InstructionError\":[0,{\"Custom\":6010}]}",
-      "signature": "4qknVcoBaUgCYtASSTQZ8oVpfpXFoWg6cT3ZPKUfy1F54YTYjf5nukpthrymhQVV5UyKC64XZ9pzpnZqdykRVuE8"
+      "signature": "5w1H1eNoyn8JegoEDsKm4HxNjVTnv9XT2eXnCjxARRJLfRATmeEcxM5xtnoFje81VKzaRRzESTztzs4MVT25SP8D"
     },
     {
       "name": "NEGATIVE A house lot: reveal before the first fact is due",
       "ok": true,
       "expected": "TooEarly",
       "error": "reveal failed: {\"InstructionError\":[1,{\"Custom\":6010}]}",
-      "signature": "66mCzPHBjXN7o4hBuYoTGpEAc6Jw6uRU9doXfN6wvYYwWj7csGYvzQWfPByXR4ySn8tJytKdhxfN2BZ6mAWgsRA6"
+      "signature": "5RjnLfUjz2T9dsA6frJiwrVJmmqsBrVQQY5xQveHC28WHMnY8j2jgc5WdiXwwbhZfWjy48AQ4beqpgTi5Senm38K"
     },
     {
       "name": "A house lot: privacy",
@@ -55,74 +72,72 @@
     },
     {
       "name": "A house lot: fact 1",
-      "text": "No memecoins inside",
-      "slot": "868667452",
-      "sig": "4LWAdopss81sdEcXqdAQpu2kGRHZdwtPHMNLJZTEaSBg9beXoLHY7heqcKGUfgTePakN6P1tS8xYYwchfeRoHp8z",
-      "ms": 451
+      "text": "Contains POPCAT",
+      "slot": "868705734",
+      "sig": "2mgAPp6bHyRLtdoebyDZPsCvhBKyw2JomkZpNsyNcobmuZocqEyrS5U6NnHuNFnqeeeyxLbAF6VRCaSRzEwv4kWa",
+      "ms": 455
     },
     {
       "name": "A house lot: fact 2",
-      "text": "3 kinds of token inside",
-      "slot": "868667902",
-      "sig": "2NRyBL9zEmxGbqBYiLtWGdpvWi8aStusyjHoBrf9CDtrMFQA3rscGGL2EpqeMzifDtdwpGkwRQeWrmQbojV1DwRY",
-      "ms": 446
+      "text": "2 kinds of token inside",
+      "slot": "868706184",
+      "sig": "3TntLfjudEM82HD5jAjTpHkk82mViAnxYYQvWHRFs2JKJAaRYELXUSww6qXua3DhGUZ9473iCgygXNLnZKqiXELh",
+      "ms": 457
     },
     {
       "name": "A house lot: fact 3",
-      "text": "The largest item is at least 70% of the value",
-      "slot": "868668352",
-      "sig": "57CLhd7j63NLqZWXBodGTpMsFWswf2G79CW3ahmnEYQc9WjfP9vVjvTqXm3Qx99EUMJwBTeNLaTr19CHN8B8WcHB",
-      "ms": 448
+      "text": "The largest item is at least 60% of the value",
+      "slot": "868706634",
+      "sig": "QakZvuV3groUXPNTFJ2YPomfdrc2hjNbDhdR6u5gYCWQjYGZtg98hem23FuJRZdQJXXEMqhPwb6AHw6wYKjmDDT",
+      "ms": 452
     },
     {
       "name": "NEGATIVE A house lot: take with a limit under the clock price",
       "ok": true,
       "expected": "PriceAboveLimit",
       "error": "take failed: {\"InstructionError\":[0,{\"Custom\":6005}]}",
-      "signature": "5t4Q9FVkV2xjn6gibXae1zUSGR6JxeRF5eEUz39VRz9QvXzCNSDUbkJNFVzu2Vhcg5ibigwYw2qo6fGQi9jMhK6Q"
+      "signature": "2RKR7MtVznkfiR1mF1UDPeLCredZXhZV7HfEvZSj4E7uJd1ooXavBLwa2FCNqYYHemrnEcQj9WisdHSSyh3VLf8a"
     },
     {
       "name": "NEGATIVE A house lot: the seller takes their own lot",
       "ok": true,
       "expected": "SellerCannotTake",
       "error": "take failed: {\"InstructionError\":[0,{\"Custom\":2040}]}",
-      "signature": "2hgL42LspurKUDA9x8k6ErDrBRx4yoTngkUz2BgFkVrzvnhmmArf3TN6a7bktGkP728nyrGEAunFzPyjZEK85wT2"
+      "signature": "ZdhZrZgN19xXbPMWUa2v2BjBkAF6f4zeEzQtLbMtJnE6kGWcp6tKxDSTWCqp94LHVr9pgDf8ohH47AX3fGL35vJ"
     },
     {
       "name": "A house lot: TAKE",
-      "sig": "3qK5JUwThQVxWC3mEoNm6eg6qMSqQAg6CXpYaASGGz3GagzmJL3B9yz7SMdhffnjX4YLpggmGbBpJMXuMhCWz4m5",
+      "sig": "wLCFQnvHTUJEiwy1EmZGTLGMCu129q7hbs7VvfTmy35QHHx65adRcVpUC7wyfFhY4efnGKQfVMRvCjh7EfRFHmf",
       "ms": 444,
-      "paid": "28248000",
-      "soldSlot": "868668766",
-      "slotsFromSendToLand": "49",
-      "clockPriceAtThatSlot": "28248000",
-      "buyerUsdcDelta": "-28248000"
+      "paid": "28374000",
+      "soldSlot": "868707041",
+      "slotsFromSendToLand": "47",
+      "clockPriceAtThatSlot": "28374000",
+      "buyerUsdcDelta": "-28374000"
     },
     {
       "name": "A house lot: unseal",
-      "sig": "5uFkuZV5GoxZuuMtdyi81yyfMJcRZcnNo1kBCoowCCU7NoSPF1W5ryUjp8CuWizNkTwY3qz7k7Lz25AfGU6FKbYq",
+      "sig": "4UAtK1kG8fVMFGuXcRvCytKBHZcyBtnYgAKo568mwGFz337oT2pZwcHUBNRDsCNZEP1gnfG137JRevTzhfZcTd1z",
       "contents": [
-        "0.050715045 SOL",
-        "2.355045376 JTO",
-        "226.477873 PYTH"
+        "6.401177 RAY",
+        "601.100879648 POPCAT"
       ],
-      "valueUsd": 17.136984,
-      "paidUsd": 28.248,
-      "edgeUsd": -11.111016
+      "valueUsd": 25.821247,
+      "paidUsd": 28.374,
+      "edgeUsd": -2.552753
     },
     {
       "name": "A house lot: deliver",
-      "sig": "312qBY37EvkihDnv9VAp2X6CJGNRKxVcRVzBqRoJR1YMMUEsVpGpLWuWPgYpHEavniurvkSDz5pgLTaW1kC3JjWg",
-      "ms": 453,
+      "sig": "g4AC96Pr44mtcHqvQBFoWZAefmEkJUFibHXrgpjM2zSp1EY4eCLRscW6FGDJRDkLNRgacgVB7JmfPB2nfY5crgo",
+      "ms": 443,
       "buyerHolds": [
-        "SOL=50715045",
-        "JTO=2355045376",
-        "PYTH=226477873"
+        "RAY=6401177",
+        "POPCAT=601100879648"
       ]
     },
     {
       "name": "A house lot: settled + verified from Solana",
-      "sig": "3zaddXN1KYxPTM6i1C4ESddxkrEFuNSeS4xX7hpPZyUxddVRRdFrzFVZ72jad567iYTWaDei1dk1gfFhmWyP7trm",
+      "sig": "5WN3wUdzeyTryjFZZQWHQym65LCu8knNuPMeP1xFWwqkTfAxXF37p2SadT89yFeSQhp1MZWFxvV6rKnDR1HggRB",
       "status": 5,
       "checks": [
         {
@@ -133,86 +148,86 @@
         {
           "name": "seal matches contents",
           "ok": true,
-          "detail": "sha256(lot‖salt‖mints‖amounts) = 004bda8000ffc2cf… vs sealed 004bda8000ffc2cf…"
+          "detail": "sha256(lot‖salt‖mints‖amounts) = bdb6dbfb554c7d4d… vs sealed bdb6dbfb554c7d4d…"
         },
         {
           "name": "fact 1 re-derived",
           "ok": true,
-          "detail": "\"No memecoins inside\" — same seed, same fact; true for the contents"
+          "detail": "\"Contains POPCAT\" — same seed, same fact; true for the contents"
         },
         {
           "name": "fact 2 re-derived",
           "ok": true,
-          "detail": "\"3 kinds of token inside\" — same seed, same fact; true for the contents"
+          "detail": "\"2 kinds of token inside\" — same seed, same fact; true for the contents"
         },
         {
           "name": "fact 3 re-derived",
           "ok": true,
-          "detail": "\"The largest item is at least 70% of the value\" — same seed, same fact; true for the contents"
+          "detail": "\"The largest item is at least 60% of the value\" — same seed, same fact; true for the contents"
         },
         {
           "name": "paid the clock price",
           "ok": true,
-          "detail": "price at rollup slot 868668766 = 28248000, paid 28248000"
+          "detail": "price at rollup slot 868707041 = 28374000, paid 28374000"
         },
         {
           "name": "value re-computed",
           "ok": true,
-          "detail": "Σ amount × oracle price = 17136984 micro-USD vs recorded 17136984"
+          "detail": "Σ amount × oracle price = 25821247 micro-USD vs recorded 25821247"
         }
       ]
     },
     {
       "name": "B consigned flip: lot address",
-      "id": 10,
-      "lot": "4tDr33nx1e5PaPWX8RZoAkoxdEW9MKxj1dwNkVur1x5E"
+      "id": 2,
+      "lot": "HhNXwBjvZhut3P9Fs7rpbFgRP6mdiqXSscacWwWZiVjJ"
     },
     {
       "name": "B consigned flip: create_lot + delegate (base)",
-      "sig": "2yHQ3HBLpMPD1jhKsPNLZ5v4n7YKghkorB2ewBzXMgxTgpCwmHuJY17zyLgCi1MmxvER5mXw3AxeJNcQ8JcH5sfk",
-      "commitment": "fb2fc351440cd4bc9abd956238a8c1669ec6c92bdbb5fa9d998142cb242c05c9"
+      "sig": "4Tsa7C7TJyJickhZZt8fCE3QTNaioMUSkSURfUaYHWuoLV59fEBQdDsmfvX8Nv7fC4ahppnjtuM32TTKVDG6UWY5",
+      "commitment": "288b9634b111c22d6174afaca32890728aa61fbde953a66306de1303c6e0e80b"
     },
     {
       "name": "B consigned flip: seal_permission",
-      "sig": "4NP44B2VteA8AbzKTq55Lfm5E3YhRzHizpobqKsQjH2AWc3jzsBpHsYtBqHoyYLFcf29jgZZMaEWzY5T6uA28rq1",
-      "ms": 537
+      "sig": "5Ts6a8eE32cr5j6dz4dDoMmpJDQvyX8rtYbntJQRSDFtruygMhqqAsKSnN1xad4xZ3HHEZLHAKZjvXXfGubfobkq",
+      "ms": 571
     },
     {
       "name": "NEGATIVE B consigned flip: pack with contents that differ from the seal",
       "ok": true,
       "expected": "CommitmentMismatch",
-      "error": "pack failed: {\"InstructionError\":[3,{\"Custom\":6004}]}",
-      "signature": "uYYv5tRYfbQN9S9drXn8dbwqw13baSgbWbFGvj74Y7a1iSPFT8fqkHkiTtGzqijyk1DNGJBEoN6SbrtA7KZ6dE3"
+      "error": "pack failed: {\"InstructionError\":[2,{\"Custom\":6004}]}",
+      "signature": "37mD2ghkHhWJUE6UzfJ6tF7iHrsjV75t2uSu9JWMia2zex1grkAU9BFmCoYJoNNrP8q2TjtwuoRSCM1jsrNcdQtK"
     },
     {
       "name": "B consigned flip: pack (seller)",
-      "sig": "2dVRYq1gkww6xb64EjPpjspS8aT1zfwEvTT2Sysat3mJoQ42nuBpbKM2B25AwyPt99m4ovFYDrKoK24UasWa4UCR",
-      "ms": 447
+      "sig": "ej3nP45ZqBhh6oogpoDRsEewwff276W8b3FjCQcAu39Z2FBAknce2jGbGevv6uoVnCTYa3AgtUzHu5fNcJdCDC4",
+      "ms": 457
     },
     {
       "name": "B consigned flip: VRF requested in the rollup, callback landed",
-      "sig": "3avpZ5mQsnmUfWXexZeaZTToHotTtuFqCEWKNaGW5KDJa66gg4DJPg51BFauKzcVgcaoskPRaYkJBmbNvSuPcm8b",
-      "callbackMs": 219
+      "sig": "3QiB5WNNADTvKb3fS3QV8wKmVcgMowDe82mQHvVHrekDBo458WNwvdhGeambyPeSMbXC3fL1EsiPaHYs9kbp7NFG",
+      "callbackMs": 218
     },
     {
       "name": "B consigned flip: go_live (seal committed to Solana)",
-      "sig": "4Ppvi3j1N2MksWauDL7WRsVsWR9ExuwWftbHv9869BscWbhVYnrTT5QNGCaqTxTHW4vSkjff5cz5WgXhnFz9gw1v",
-      "openSlot": "868669900",
-      "commitment": "fb2fc351440cd4bc9abd956238a8c1669ec6c92bdbb5fa9d998142cb242c05c9"
+      "sig": "HM3Xu1SgnaS4ukRsK859m3aAXKu2S7sffA6cKwjrpcbupt6bL1ek2tWA6o928iY7cKT2BbjNYeY785Zwfwuxp2N",
+      "openSlot": "868708218",
+      "commitment": "288b9634b111c22d6174afaca32890728aa61fbde953a66306de1303c6e0e80b"
     },
     {
       "name": "NEGATIVE B consigned flip: take before the clock opens",
       "ok": true,
       "expected": "TooEarly",
       "error": "take failed: {\"InstructionError\":[0,{\"Custom\":6010}]}",
-      "signature": "44hxo5NkJwSQYktkXmhZRkwep4gyeLAam75xcB1Bjs1ZZdXm6kkUKkZtcDeqoHC9kN8UsAdVxjstFHVNV4F6dfQB"
+      "signature": "5QP6GZVEBCmQ1TuqNvDWoZJRWZGSyyYYzkD2K6rVD5cF8uL3X8FBS7og4meUDSdciruNoTx4g7nYtAH3UJ6GxfwB"
     },
     {
       "name": "NEGATIVE B consigned flip: reveal before the first fact is due",
       "ok": true,
       "expected": "TooEarly",
       "error": "reveal failed: {\"InstructionError\":[1,{\"Custom\":6010}]}",
-      "signature": "4VMPXvXi6QvBv6Ky4zvztWcNjqrrri86JL9w7MQKYg7cGV9MWPXk96EyvW2igTvo7AbSunrkXkLi21aK2jNhf3Ka"
+      "signature": "4xysFPSm8nRZRY5Yzmyzw7T7YBRJzm5UARy6oyRKNnpXhdRiBRy7M2DmJVjYRaGv5QRRK3Z6pteszQv1X5mo3mKN"
     },
     {
       "name": "B consigned flip: privacy",
@@ -222,64 +237,63 @@
     },
     {
       "name": "B consigned flip: fact 1",
-      "text": "No BONK inside",
-      "slot": "868670200",
-      "sig": "59iPvwDz7Dg48QvEg4LkaYPqphr8K29JnE6DG1KCSswH2nt6GuQpq8QHsukgQoy6tGSG4ApEcLGnND8ymxLRDCoA",
-      "ms": 459
+      "text": "2 kinds of token inside",
+      "slot": "868708518",
+      "sig": "5hJ3rsBQiQAwPhiJdbNYcDznVG7SCJ7jfViACLAaWiuntaXx6fKHwfyaYFnrmRvSxMAEMwRAFYzTSJDmerrxJiDL",
+      "ms": 455
     },
     {
       "name": "B consigned flip: fact 2",
-      "text": "No memecoins inside",
-      "slot": "868670500",
-      "sig": "8RtUhBrkg3JCgsgbEUsk7rvux6CuqNL4AxoCtcKutsNJFPoy3ndV1EPEpfmijsN7xvi8VQidwsWKF7it7R4wSyv",
-      "ms": 462
+      "text": "1 memecoin inside",
+      "slot": "868708818",
+      "sig": "5sL5m4L7PJebmkZiEK1HVz8dGX483BUQUZrVEGkYew6oBZPLfe5aKMW6VpKe6tAweANdMBvMQk7riVY9xErW84iC",
+      "ms": 457
     },
     {
       "name": "NEGATIVE B consigned flip: take with a limit under the clock price",
       "ok": true,
       "expected": "PriceAboveLimit",
       "error": "take failed: {\"InstructionError\":[0,{\"Custom\":6005}]}",
-      "signature": "2eBdeBCMrLGxRTRLNp5djqUuRQZyTUXLWPVsKjnvmbEESE79RP5tbheVEify3K8vXDovYATKxKhq8xuMqJLBpN5H"
+      "signature": "3mtweGa4Bpd9FGzqD5p6x94tMTfyt8BfieEYWnFnMeHvZbBMtbsFWkzyQAp5aMyzpnu8bsgKjMPaiktaUzHdkhay"
     },
     {
       "name": "B consigned flip: TAKE",
-      "sig": "qqgkvCr5hjHgJt5Qdw4VzDwJe5HmfvXdAHpdazb3JvE64LqqfnpeYFu3RGWpYMjzntuKet8f4oPLpdg98rQo6LD",
-      "ms": 443,
-      "paid": "23458000",
-      "soldSlot": "868670819",
+      "sig": "2GTGcGXtjVXBPdvh9q5mCzSwUrM1dRMFov6WDYpW4zkgspeTw7qYEAbaJjckcRDiztdTmBRmgYxrr8qRfJ7CBJiP",
+      "ms": 442,
+      "paid": "23746000",
+      "soldSlot": "868709121",
       "slotsFromSendToLand": "46",
-      "clockPriceAtThatSlot": "23458000",
-      "buyerUsdcDelta": "-23458000"
+      "clockPriceAtThatSlot": "23746000",
+      "buyerUsdcDelta": "-23746000"
     },
     {
       "name": "B consigned flip: unseal",
-      "sig": "3GfNf7Jfq2TwwsFySSK5FfMRnU4r3vrPFcU1PtcUBaJvmyozdoViNmVpctpAnMu8eD3eq3c4KuAbjXdNsCYaHLHL",
+      "sig": "5q8QQn72UbevUUT73dSNW6Da9n42iEr9PGwcFDWFSF8qPRVobujLJnsmqvsC1Ppy8TyrYAExcGvGrH9s8Li5VJ1Y",
       "contents": [
-        "0.050715045 SOL",
-        "2.355045376 JTO",
-        "226.477873 PYTH"
+        "6.401177 RAY",
+        "601.100879648 POPCAT"
       ],
-      "valueUsd": 17.095858,
-      "paidUsd": 23.458,
-      "edgeUsd": -6.362142
+      "valueUsd": 25.779422,
+      "paidUsd": 23.746,
+      "edgeUsd": 2.033422
     },
     {
       "name": "B consigned flip: deliver",
-      "sig": "2MWVLcUWDeMVUkSbmU3vEH5nG2Am1ozT8qYA27UHW7BjQLmS8NHagAJZ8uDGkzMcSXTmXGHAJHHhgfyVJa4S8SnJ",
-      "ms": 552,
+      "sig": "4qKewKimaMK8HQrNHJ1AYMasgxaWN9oirgiEjvXQr7kqFi81cWmrXiqb4XNin1bNrLP1oUcBkRCktiRREQdeYkYG",
+      "ms": 561,
       "buyerHolds": [
         "SOL=169191644",
         "BONK=217738326337",
         "JUP=75954450",
         "JTO=57872681436",
         "PYTH=458093203",
-        "RAY=843716",
-        "POPCAT=99939313067"
+        "RAY=7244893",
+        "POPCAT=701040192715"
       ]
     },
     {
       "name": "B consigned flip: settled + verified from Solana",
-      "sig": "5CMxAe6yTkNwpmxyZN1YqCQhJUX4Nz5KS8UxYCUir8wCmUn2jib2dgKzAwNyVCAnpDtPtM6i4EbLrHRapsDSptoA",
+      "sig": "2vZyNkoMPdYmyajvwZH29eBWDvWoVn7V53FSiwaKMc29oykjdxptWBpLopccygAdMGuw3FnQuZkgSmMK79wRcUGb",
       "status": 5,
       "checks": [
         {
@@ -290,59 +304,59 @@
         {
           "name": "seal matches contents",
           "ok": true,
-          "detail": "sha256(lot‖salt‖mints‖amounts) = fb2fc351440cd4bc… vs sealed fb2fc351440cd4bc…"
+          "detail": "sha256(lot‖salt‖mints‖amounts) = 288b9634b111c22d… vs sealed 288b9634b111c22d…"
         },
         {
           "name": "fact 1 re-derived",
           "ok": true,
-          "detail": "\"No BONK inside\" — same seed, same fact; true for the contents"
+          "detail": "\"2 kinds of token inside\" — same seed, same fact; true for the contents"
         },
         {
           "name": "fact 2 re-derived",
           "ok": true,
-          "detail": "\"No memecoins inside\" — same seed, same fact; true for the contents"
+          "detail": "\"1 memecoin inside\" — same seed, same fact; true for the contents"
         },
         {
           "name": "paid the clock price",
           "ok": true,
-          "detail": "price at rollup slot 868670819 = 23458000, paid 23458000"
+          "detail": "price at rollup slot 868709121 = 23746000, paid 23746000"
         },
         {
           "name": "value re-computed",
           "ok": true,
-          "detail": "Σ amount × oracle price = 17095858 micro-USD vs recorded 17095858"
+          "detail": "Σ amount × oracle price = 25779422 micro-USD vs recorded 25779422"
         }
       ]
     },
     {
       "name": "C unsold house lot: lot address",
-      "id": 11,
-      "lot": "6cs53GwuoTz62UgayZuWTt18f7HiiPXuHgZKLHSVBYA5"
+      "id": 3,
+      "lot": "HjD8JtoHHZvjtoko3pi5u2ToxsnuPJm3tCzekUJL5SJo"
     },
     {
       "name": "C unsold house lot: create_house_lot + delegate (base)",
-      "sig": "5unFQwGotYWBa6mpPxk5wpiq2WaD7yFnVz3MEaV6FoijyxoDWobYeqkPPrkU1GE1nHSjbGmE6EiKNpboaAe8BMiJ"
+      "sig": "NoeZCkbaySXYpTfqC2GTcWeGeutPtGQx4x6FCwv4K2uNj1E2Cypwmm8YWtFBwTzXtES2ZAhkxrdd36siozv6X1Q"
     },
     {
       "name": "C unsold house lot: seal_permission",
-      "sig": "56bosnuf4hyqiWveM6tyePTfy3h15gxUyZ59f4RC4NKMT6Evy82BZguJA8qwEgsWtDdMhqXy36TTJqiydGEk4jEf",
-      "ms": 528
+      "sig": "2Wqk8GGEVLb2XpUHdE4euiD3LJBya4hw5f8UEVrrhLAcyrNQP99jeXJ3MV89MwAL8jCuo34wtrLmhpZbdxG5MJvT",
+      "ms": 554
     },
     {
       "name": "C unsold house lot: VRF requested in the rollup, callback landed",
-      "sig": "ZzoL5427HkZ3TBoCXxAGQDDtCQN4qq1d45ovuaz95U2uJR3r3ptMDq8aiEsoqVARaBY6ypEDNuLRodAYaL24mHG",
-      "callbackMs": 232
+      "sig": "2mkeKZ88YToxj7j69MU4SPDw2qHgXYvSjwmFwEbTTiyiC9obWUVyNUpdudznpeMCo9g8cuitAwBiPHLNkioRqt6s",
+      "callbackMs": 223
     },
     {
       "name": "C unsold house lot: pack_from_pool (contents drawn by the seed)",
-      "sig": "9FHseByDD4hA6WoHyheUV4Y3xksvbJ2U2sNCAnNcPj6o7db33LVFwLPJ4j7ChfmVFWiD6yBQSq4dhqD13ypFWdp",
-      "ms": 446
+      "sig": "2ozDjyhVWVYJuneMxMEPAK4AB69cJZackgkp3FnmXKFf2qsPRzgCSDnWzi4xfqtPTr1KfAoQsu4SKJCY2NWW7fYA",
+      "ms": 449
     },
     {
       "name": "C unsold house lot: go_live (seal committed to Solana)",
-      "sig": "2hxcSpqaH3ujz42cJAAaikf5PmDVLQnSVJSJRM4QjPhP4KDVejkv74HLBjApwyZY9GPVwQqw5joevayrmmxCf8gu",
-      "openSlot": "868671882",
-      "commitment": "f587a4912719a65e27d3f7b08b65c1cb194f57564dcb81d6810ad0e1bd875c8c"
+      "sig": "429hRSjafVNx4H8FWxSB3Y3UAicgGvnJjLRLrKzGP1PqdPuMwaziJu8tAsUfGWSgoYwe9R1e3TDhmiAmUhMLXJpV",
+      "openSlot": "868710169",
+      "commitment": "98ab0231b2bae9b856d29dd8f068474be90372ec249ef4ab42ff48bf0cf4dea7"
     },
     {
       "name": "C unsold house lot: privacy",
@@ -352,51 +366,51 @@
     },
     {
       "name": "C unsold house lot: fact 1",
-      "text": "Contains WIF",
-      "slot": "868671942",
-      "sig": "5Qdf2PreRmyDvywZgFUEzc8zX9rr4nPEX6fvz6p2h17ERqcTnpxtXm9ZRLa7pL8vwiiFG7p9LkWkNmtgSye3pawE",
-      "ms": 457
+      "text": "Contains JTO",
+      "slot": "868710229",
+      "sig": "oUeUZvi9SQzotKZXffRa61vvGbxYXSy59GVoD1wgYGthBAyhGM3mSd4HHmCFzTxBzrJoFK7bLDBbMqUHmad4tj8",
+      "ms": 450
     },
     {
       "name": "C unsold house lot: fact 2",
-      "text": "No SOL inside",
-      "slot": "868672002",
-      "note": "came out with the previous reveal"
+      "text": "No WIF inside",
+      "slot": "868710289",
+      "sig": "2ZD9rPP1uxkeY4ssRAYV5P2hsuqoHSsbYy9EeZ99zG11mPidpmppmgEryz1WgGjPf2HkEToS1qsF9mrHMEMLTBCc",
+      "ms": 443
     },
     {
       "name": "C unsold house lot: fact 3",
-      "text": "The largest item is at least 40% of the value",
-      "slot": "868672062",
-      "sig": "5EGAcW3ViHL8ybv7tQSHZWBWWnUsSBFtvfYp6MhKbaEUVAZ9TPYvVMxomXK2TqvsvNGLdj2xWQiKpcQDoCr951aK",
-      "ms": 464
-    },
-    {
-      "name": "C unsold house lot: fact 4",
-      "text": "Worth more than $22.16 in total",
-      "slot": "868672122",
+      "text": "Worth less than $39.74 in total",
+      "slot": "868710349",
       "note": "came out with the previous reveal"
     },
     {
+      "name": "C unsold house lot: fact 4",
+      "text": "Worth less than $34.68 in total",
+      "slot": "868710409",
+      "sig": "xxHtwee97grEcjyxHrWDhjA3ZXBTRjyQ2AUaeUTs6zHt31fo2oRBv4G9UQmuV69fAE7o7SMBKKNX9qgQfev24EN",
+      "ms": 443
+    },
+    {
       "name": "C unsold house lot: fact 5",
-      "text": "The WIF inside is worth $5.29–$8.49",
-      "slot": "868672182",
-      "sig": "4XpGVYYjFvNDTWdnvPvmsm5knzcZbACiN5gAZz8ra5evWK5bMCa6gzpUfqKxMngmJJhVYLVY1A4GbEeKpEdgb3bD",
-      "ms": 448
+      "text": "The largest item is worth $11.69–$16.65",
+      "slot": "868710469",
+      "note": "came out with the previous reveal"
     },
     {
       "name": "C unsold house lot: unsold, opened anyway",
-      "sig": "5WZiUqA1j3sSktkwaG9fMyRPLD1o9XsPEQJ3i9K7y3AFuMHPJAP4CHUGF8LgffSE2taRUdCM8iZBKEiqjEZQk78p",
+      "sig": "RLH1MhhrED7HEvX1NPjaYWJnpjyXayj24S24hRVnj2HPUtFbq2oZEiom9MyjT4yYB4NQJy5YhbhM4GR4jJP2aAy",
       "status": 8,
-      "value": "25804477"
+      "value": "32958022"
     },
     {
       "name": "C unsold house lot: returned",
-      "sig": "4Ftm3YmnDFiJVyWmkSixpaSscCWhbAaizG2W77PX5TDCv1bQZbmZG97AvhyrxqsWfWhnd3CgcWiBX3NGHpN9qkAL",
+      "sig": "is5rcfiyFU6m4Qqcx2KysFdZfLvAPtbBJhv4fTUSxop5VaM9apF9oHdb7RVH4yKsHNRBt27ACU23c5TQUkTYhpi",
       "status": 6
     },
     {
       "name": "C unsold house lot: settled + verified from Solana",
-      "sig": "4Pnh6rE3r4rAhxayzTXsnZJL3FynZSzoXT1fUbsiTGUuh6U68WgdLXmXrxa7R51aPtVQ3V8KF1HkB49MsuXKepD7",
+      "sig": "UEeuoAaJ7VmPY8pvsMnkEsJTE7ZQnuyRbhLjSJzrY6obEpS8So7qn7YAyH4ygYgG6iXAEgsaMtBK3oC3Q3pEwZu",
       "status": 6,
       "checks": [
         {
@@ -407,41 +421,41 @@
         {
           "name": "seal matches contents",
           "ok": true,
-          "detail": "sha256(lot‖salt‖mints‖amounts) = f587a4912719a65e… vs sealed f587a4912719a65e…"
+          "detail": "sha256(lot‖salt‖mints‖amounts) = 98ab0231b2bae9b8… vs sealed 98ab0231b2bae9b8…"
         },
         {
           "name": "fact 1 re-derived",
           "ok": true,
-          "detail": "\"Contains WIF\" — same seed, same fact; true for the contents"
+          "detail": "\"Contains JTO\" — same seed, same fact; true for the contents"
         },
         {
           "name": "fact 2 re-derived",
           "ok": true,
-          "detail": "\"No SOL inside\" — same seed, same fact; true for the contents"
+          "detail": "\"No WIF inside\" — same seed, same fact; true for the contents"
         },
         {
           "name": "fact 3 re-derived",
           "ok": true,
-          "detail": "\"The largest item is at least 40% of the value\" — same seed, same fact; true for the contents"
+          "detail": "\"Worth less than $39.74 in total\" — same seed, same fact; true for the contents"
         },
         {
           "name": "fact 4 re-derived",
           "ok": true,
-          "detail": "\"Worth more than $22.16 in total\" — same seed, same fact; true for the contents"
+          "detail": "\"Worth less than $34.68 in total\" — same seed, same fact; true for the contents"
         },
         {
           "name": "fact 5 re-derived",
           "ok": true,
-          "detail": "\"The WIF inside is worth $5.29–$8.49\" — same seed, same fact; true for the contents"
+          "detail": "\"The largest item is worth $11.69–$16.65\" — same seed, same fact; true for the contents"
         },
         {
           "name": "value re-computed",
           "ok": true,
-          "detail": "Σ amount × oracle price = 25804477 micro-USD vs recorded 25804477"
+          "detail": "Σ amount × oracle price = 32958022 micro-USD vs recorded 32958022"
         }
       ]
     }
   ],
-  "finishedAt": "2026-11-23T14:28:09.980Z",
+  "finishedAt": "2026-11-23T14:34:32.927Z",
   "failures": 0
 }

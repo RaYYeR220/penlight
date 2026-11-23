@@ -69,4 +69,6 @@ export const house = {
   presence: (id: string) => post<{ active: boolean }>(`/presence`, { id }),
   faucet: (owner: string) => post<{ signature: string; amount: string }>(`/faucet`, { owner }),
   relay: (tx: string) => post<{ signature: string }>(`/relay`, { tx }),
+  /** A little devnet SOL for the Solana fees of withdrawing what a faucet player won. */
+  sponsorWithdraw: (owner: string) => post<{ signature: string; lamports: number; kinds: number }>(`/sponsor-withdraw`, { owner }),
 };

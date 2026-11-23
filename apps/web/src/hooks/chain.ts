@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PublicKey } from "@solana/web3.js";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { CATALOGUE, decodeLot, sendAndConfirm, type LotView } from "@penlight/sdk";
 import { penlight, playerKey, rollupAsPlayer, rollupPublic } from "@/lib/chain";
 import { house, type ApiLot, type FeedEvent } from "@/lib/house";
@@ -67,6 +68,8 @@ export function useRollupSlot(everyMs = 50): bigint {
 export function useLot(id: number | null) {
   const [lot, setLot] = useState<LotView | null>(null);
   const [missing, setMissing] = useState(false);
+  const [source, setSource] = useState<"rollup" | "solana" | null>(null);
+  const settledRef = useRef(false);
   useEffect(() => {
     if (id === null || Number.isNaN(id)) return;
     const pl = penlight();
@@ -79,13 +82,23 @@ export function useLot(id: number | null) {
       ]);
       if (!alive) return;
       const settled = b && b.owner.equals(pl.programId);
-      if (r && !settled) setLot(r);
-      else if (settled) setLot(decodeLot(address, b!.data));
-      else setMissing(true);
+      settledRef.current = !!settled;
+      if (r && !settled) {
+        setLot(r);
+        setSource("rollup");
+        setMissing(false);
+      } else if (settled) {
+        setLot(decodeLot(address, b!.data));
+        setSource("solana");
+        setMissing(false);
+      } else setMissing(true);
     };
     void load();
     const sub = rollupPublic().onAccountChange(address, (acc) => {
-      if (alive && acc.owner.equals(pl.programId)) setLot(decodeLot(address, acc.data));
+      if (alive && acc.owner.equals(pl.programId)) {
+        // Once the record is back on Solana, the rollup's copy is history.
+        if (!settledRef.current) setLot(decodeLot(address, acc.data));
+      }
     }, { commitment: "confirmed" });
     const poll = setInterval(load, 1500);
     return () => {
@@ -94,7 +107,7 @@ export function useLot(id: number | null) {
       void rollupPublic().removeAccountChangeListener(sub);
     };
   }, [id]);
-  return { lot, missing };
+  return { lot, missing, source };
 }
 
 export function useLots(everyMs = 2000) {
@@ -172,8 +185,17 @@ export function usePlayer() {
           return 0n;
         }
       };
-      const [usdc, ...tokens] = await Promise.all([bal(pl.usdcMint), ...pl.mints.map(bal)]);
+      const mints = [pl.usdcMint, ...pl.mints];
+      const [balances, onBase] = await Promise.all([
+        Promise.all(mints.map(bal)),
+        pl.base.getMultipleAccountsInfo(mints.map((m) => pl.ata(k, m)), "confirmed").catch(() => null),
+      ]);
+      // A plain SPL account at the same address on Solana means the tokens were withdrawn:
+      // the rollup is only mirroring that Solana account, so it isn't a rollup balance.
+      const [usdc, ...tokens] = balances.map((b, i) => (onBase?.[i]?.owner.equals(TOKEN_PROGRAM_ID) ? 0n : b));
       setHoldings({ usdc, tokens });
+    } catch {
+      /* the rollup session could not be opened; keep the last balances and retry on the next tick */
     } finally {
       busy.current = false;
     }

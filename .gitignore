@@ -44,3 +44,4 @@ spike/
 recon/
 submission-packet.md
 scripts/_probe.ts
+.house-data/

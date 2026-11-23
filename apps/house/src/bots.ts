@@ -77,8 +77,14 @@ function appraisal(lot: LotView) {
     const facts = lot.hints.slice(0, lot.hintsRevealed).map((h, i) => ({ fact: { kind: h.kind, sym: h.sym, a: h.a, b: h.b }, prices: lot.hintPrices[i] }));
     if (lot.origin === ORIGIN.HOUSE) {
       const prices = lot.hintPrices[Math.max(0, lot.hintsRevealed - 1)];
-      const r = appraiseHouseLot(facts, prices, 3000);
-      a = r.consistent > 20 ? { p10: r.p10, p50: r.p50, p90: r.p90 } : { p10: 0n, p50: 0n, p90: 0n };
+      const r = appraiseHouseLot(facts, prices, 6000);
+      if (r.consistent > 20) a = { p10: r.p10, p50: r.p50, p90: r.p90 };
+      else {
+        // Too few draws survive the facts to read a distribution: fall back to the value bounds the facts state.
+        const bnd = boundsFromFacts(facts.map((f) => f.fact));
+        const mid = bnd.hi !== null ? (bnd.lo + bnd.hi) / 2n : bnd.lo;
+        a = { p10: bnd.lo, p50: mid, p90: bnd.hi ?? mid };
+      }
     } else {
       const bnd = boundsFromFacts(facts.map((f) => f.fact));
       a = { p10: bnd.lo, p50: bnd.lo, p90: bnd.hi ?? bnd.lo };

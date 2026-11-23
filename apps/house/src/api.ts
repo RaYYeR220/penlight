@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { ComputeBudgetProgram, PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
+import { PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import { transferSpl } from "@magicblock-labs/ephemeral-rollups-sdk";
 import { NETWORK, STATUS, STATUS_NAME, type LotView } from "@penlight/sdk";
 import { base, config, deployment, house, log, pl, store } from "./context.js";
@@ -112,6 +112,8 @@ app.post("/api/faucet", async (c) => {
   store.faucetTimes = store.faucetTimes.filter((t) => t > hourAgo);
   if (store.faucetTimes.length >= config.faucetPerHour) return c.json({ error: "faucet is busy, try again in a few minutes" }, 429);
   store.faucetTimes.push(Date.now());
+  // Claim the slot before awaiting, so parallel requests for one owner can't all pass.
+  store.faucetGiven[k] = Date.now();
   try {
     const ixs = await transferSpl(house.publicKey, owner, pl.usdcMint, config.faucetUsdc * 1_000_000n, {
       visibility: "private",
@@ -126,6 +128,7 @@ app.post("/api/faucet", async (c) => {
     store.event({ kind: "faucet", text: `Private transfer of ${config.faucetUsdc} test USDC into a new player's rollup balance`, sig: signature });
     return c.json({ signature, amount: config.faucetUsdc.toString() });
   } catch (e) {
+    delete store.faucetGiven[k];
     log("faucet failed", (e as Error).message);
     return c.json({ error: "faucet transfer failed" }, 502);
   }
@@ -134,13 +137,22 @@ app.post("/api/faucet", async (c) => {
 // ── relay: the House pays base-layer fees for a player's consign transaction ──
 const DISC = (name: string) => Buffer.from((pl.program.idl.instructions.find((i) => i.name === name) as { discriminator: number[] }).discriminator);
 const relayTimes = new Map<string, number[]>();
+let relayGlobal: number[] = [];
+const RELAY_PER_CLIENT_HOUR = 20;
+const RELAY_GLOBAL_HOUR = 120;
 
 app.post("/api/relay", async (c) => {
   const body = await c.req.json().catch(() => ({}));
-  const ip = c.req.header("x-forwarded-for")?.split(",")[0] ?? "local";
+  // The proxy in front of the House appends the real client address last.
+  const ip = c.req.header("x-forwarded-for")?.split(",").pop()?.trim() || "local";
   const hourAgo = Date.now() - 3_600_000;
   const mine = (relayTimes.get(ip) ?? []).filter((t) => t > hourAgo);
-  if (mine.length >= 30) return c.json({ error: "relay limit reached" }, 429);
+  relayGlobal = relayGlobal.filter((t) => t > hourAgo);
+  if (mine.length >= RELAY_PER_CLIENT_HOUR || relayGlobal.length >= RELAY_GLOBAL_HOUR) return c.json({ error: "relay limit reached" }, 429);
+  // Every attempt counts, successful or not.
+  mine.push(Date.now());
+  relayTimes.set(ip, mine);
+  relayGlobal.push(Date.now());
   let tx: Transaction;
   try {
     tx = Transaction.from(Buffer.from(String(body.tx), "base64"));
@@ -148,26 +160,22 @@ app.post("/api/relay", async (c) => {
     return c.json({ error: "bad transaction" }, 400);
   }
   if (!tx.feePayer?.equals(house.publicKey)) return c.json({ error: "fee payer must be the House" }, 400);
+  // Exactly [create_lot, delegate_lot] and nothing else: no compute-budget or
+  // priority-fee instructions, so the House's cost is the fixed rent and base fee.
   const create = DISC("create_lot");
   const delegate = DISC("delegate_lot");
-  for (const ix of tx.instructions) {
-    if (ix.programId.equals(ComputeBudgetProgram.programId)) continue;
-    if (!ix.programId.equals(pl.programId)) return c.json({ error: `program ${ix.programId.toBase58()} is not relayed` }, 400);
-    const d = ix.data.subarray(0, 8);
-    if (d.equals(create)) {
-      // payer = House, seller = a different signer; the House only pays rent and fees.
-      if (!ix.keys[0].pubkey.equals(house.publicKey) || ix.keys[1].pubkey.equals(house.publicKey)) return c.json({ error: "bad create_lot accounts" }, 400);
-    } else if (d.equals(delegate)) {
-      if (!ix.keys[0].pubkey.equals(house.publicKey)) return c.json({ error: "bad delegate_lot accounts" }, 400);
-    } else return c.json({ error: "only create_lot and delegate_lot are relayed" }, 400);
-  }
+  const ixs = tx.instructions;
+  if (ixs.length !== 2 || !ixs.every((ix) => ix.programId.equals(pl.programId))) return c.json({ error: "only [create_lot, delegate_lot] is relayed" }, 400);
+  const [ci, di] = ixs;
+  if (!ci.data.subarray(0, 8).equals(create) || !di.data.subarray(0, 8).equals(delegate)) return c.json({ error: "only [create_lot, delegate_lot] is relayed" }, 400);
+  // create_lot: payer = House, seller = a different signer. delegate_lot: payer = House, same lot.
+  if (!ci.keys[0].pubkey.equals(house.publicKey) || ci.keys[1].pubkey.equals(house.publicKey)) return c.json({ error: "bad create_lot accounts" }, 400);
+  if (!di.keys[0].pubkey.equals(house.publicKey) || !di.keys[2].pubkey.equals(ci.keys[3].pubkey)) return c.json({ error: "bad delegate_lot accounts" }, 400);
   try {
     tx.partialSign(house);
     if (!tx.verifySignatures()) return c.json({ error: "missing signatures" }, 400);
     const signature = await base.sendRawTransaction(tx.serialize());
     await base.confirmTransaction(signature, "confirmed");
-    mine.push(Date.now());
-    relayTimes.set(ip, mine);
     store.event({ kind: "consigned", text: "A player consigned a lot of their own", sig: signature });
     return c.json({ signature });
   } catch (e) {

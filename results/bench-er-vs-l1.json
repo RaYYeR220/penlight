@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-11-23T14:48:33.728Z",
+  "measuredFrom": "a single client in Europe over the public internet; wall-clock numbers include network round trips",
+  "rollup": {
+    "endpoint": "https://devnet-tee.magicblock.app",
+    "slotsPerSecond": 99.93,
+    "msPerSlot": 10.01,
+    "landing": {
+      "samples": 20,
+      "medianMs": 452,
+      "p90Ms": 474,
+      "medianSlotsToLand": 46
+    }
+  },
+  "solanaL1": {
+    "endpoint": "devnet",
+    "slotsPerSecond": 4.32,
+    "msPerSlot": 231.56,
+    "landing": {
+      "samples": 20,
+      "medianMs": 893,
+      "p90Ms": 1118,
+      "medianSlotsToLand": 2
+    }
+  },
+  "clock": {
+    "seconds": 45,
+    "spanUsd": 54,
+    "rollupTicks": 4497,
+    "l1Ticks": 194,
+    "rollupStepUsd": 0.012,
+    "l1StepUsd": 0.2784,
+    "ratio": 23.2
+  },
+  "fees": {
+    "rollupPerTx": "0 SOL (gasless)",
+    "l1PerTx": "5000 lamports base fee"
+  }
+}

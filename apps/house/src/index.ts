@@ -2,7 +2,7 @@ import { serve } from "@hono/node-server";
 import { app } from "./api.js";
 import { botsTick, fundBots, initBots } from "./bots.js";
 import { config, deployment, house, log, store } from "./context.js";
-import { schedule, tick } from "./keeper.js";
+import { backfill, schedule, tick } from "./keeper.js";
 
 function loop(name: string, everyMs: number, fn: () => Promise<unknown>) {
   let running = false;
@@ -21,6 +21,7 @@ function loop(name: string, everyMs: number, fn: () => Promise<unknown>) {
 
 store.load();
 initBots();
+void backfill().catch((e) => log("backfill:", e.message));
 log(`house ${house.publicKey.toBase58()} program ${deployment.programId}`);
 
 loop("keeper", 250, tick);

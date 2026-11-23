@@ -135,7 +135,13 @@ app.post("/api/faucet", async (c) => {
 });
 
 // ── relay: the House pays base-layer fees for a player's consign transaction ──
-const DISC = (name: string) => Buffer.from((pl.program.idl.instructions.find((i) => i.name === name) as { discriminator: number[] }).discriminator);
+// Anchor's Program camelCases instruction names; accept either spelling.
+const DISC = (name: string) => {
+  const camel = name.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
+  const ix = pl.program.idl.instructions.find((i) => i.name === name || i.name === camel) as { discriminator: number[] } | undefined;
+  if (!ix) throw new Error(`instruction ${name} not in IDL`);
+  return Buffer.from(ix.discriminator);
+};
 const relayTimes = new Map<string, number[]>();
 let relayGlobal: number[] = [];
 const RELAY_PER_CLIENT_HOUR = 20;

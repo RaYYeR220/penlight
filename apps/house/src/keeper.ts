@@ -149,6 +149,30 @@ export async function tick() {
   }
 }
 
+/**
+ * On start, read every finished lot's final record from Solana so the floor,
+ * the feed and the leaderboard keep their history across restarts.
+ */
+export async function backfill() {
+  const created = (await pl.houseState()).lotsCreated;
+  const ids = Array.from({ length: created }, (_, i) => i);
+  for (let i = 0; i < ids.length; i += 100) {
+    const chunk = ids.slice(i, i + 100);
+    const addrs = chunk.map((id) => pl.lotAddress(id));
+    const infos = await base.getMultipleAccountsInfo(addrs, "confirmed");
+    infos.forEach((acc, j) => {
+      if (!acc || !acc.owner.equals(pl.programId)) return;
+      const lot = decodeLot(addrs[j], acc.data);
+      if (lot.status === STATUS.DELIVERED || lot.status === STATUS.EXPIRED) {
+        store.lots.set(chunk[j], lot);
+        store.finished.add(chunk[j]);
+      }
+    });
+  }
+  store.save();
+  log(`backfilled ${store.lots.size} finished lots from Solana`);
+}
+
 export async function createHouseLot() {
   const id = (await pl.houseState()).lotsCreated;
   const tx = new Transaction().add(
